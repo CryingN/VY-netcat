@@ -5,20 +5,19 @@ pub struct CmdOption {
 	abbr		string
 	full		string
 	vari		string
-	default		string
+	defa		string
 	desc		string
 }
 
 // Assignment type option
 pub fn options(args []string, long_option CmdOption) string {
         mut flags := ''
+		flags = long_option.defa
         for i, v in args {
                 if v in [long_option.abbr, long_option.full] {
-                        if i + 1 < args.len && args[i + 1][0] != 45 {
-                                flags = args[i + 1]
-                        } else {
-				flags = long_option.default
-			}
+                    if i + 1 < args.len && args[i + 1][0] != 45 {
+                    	    flags = args[i + 1]		
+                    }
                 }
         }
         return flags
