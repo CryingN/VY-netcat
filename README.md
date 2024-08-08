@@ -20,9 +20,12 @@
 | 帮助菜单 | 已解决  | sudopacman |
 | 基础连接 | 已解决  | sudopacman |
 | 支持gcc编译 | 已解决 | sudopacman |
+| 交叉编译 | 存在bug(module client) |  |
+| 兼容windows | 最低程度 | sudopacman |
+| socket崩溃问题 | 未解决 |  |
 | 指令执行 | 未解决  |            |
 | 监听端口 | 已解决  | sudopacman |
-| 保持监听 | 未解决  |            |
+| 保持监听 | 未解决  | sudopacman |
 
 # 使用
 
@@ -32,24 +35,57 @@
 
 ```bash
 wget https://gitee.com/cryingn/vy-netcat/archive/refs/tags/[版本号]
+mv [文件名] nc
 ./nc -h
 ```
 
 ## 自行编译
 
-详细的编译规则已经写在makefile中, 系统默认使用vlang进行编译, 当vlang编译失败时, 会自动切换到gcc进行编译.
+### Linux
+
+详细的编译规则写在makefile中, 系统默认使用vlang进行编译, 当vlang编译失败时, 会自动切换到gcc进行编译.
 
 ```bash
-git clone https://gitee.com/cryingn/vy-netcat/releases/download/[版本号]/nc
+git clone https://gitee.com/cryingn/vy-netcat.git
 cd VY-netcat
 make
 cd bin
 ./nc -h
 ```
 
+### Windows
+
+**VY-netcat**最低程度支持了在windows环境使用, 考虑到不方便使用`make`, 单独写了**make.bat**文件提供
+
+```shell
+git clone https://gitee.com/cryingn/vy-netcat.git
+cd VY-netcat
+./make
+cd bin
+./nc -h
+```
+
+# 帮助
+
+以下为`help`中的说明.
+
+```bash
+[root_cn@archlinux vy-netcat]$ ./nc -h
+VY netcat v0.1.0, the network tools suitable for CTF.
+Basic usages:
+ connect to somewhere:  nc [addr] [port]
+ listen to somewhere:   nc -lp [port]
+ keep to listen:                nc -klp [port]
+CmdOptions:
+ -h, --help                            display this help and exit.
+ -e, --exec [shell]                    program to exec after connect.
+ -lp, --listen_port [int]              listen the local port number.
+ -klp, --keep_listen_port [int]        keep to listen the local port number.
+ ```
+
 # 参与贡献
 
-我们推荐使用vlang直接进行贡献, 在提交前请确保已经将文件编译到c, 我们提供了足够简便的方法用于检查:
+我们推荐使用vlang直接进行贡献, 在提交前请确保已经将文件编译到c(linux环境下), 我们提供了足够简便的方法用于检查:
 
 ```bash
 make c

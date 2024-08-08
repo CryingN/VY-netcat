@@ -6,14 +6,14 @@ import readline { read_line }
 import os
 import cmd { options, set_options, CmdOption }
 import net
-import client { set_sever, for_free }
+import client { set_sever, send_message, for_free }
 
 fn main() {
 
 	false_log := '\033[31m[false] \033[0m'
 	true_log := '\033[32m[true] \033[0m'
 	warn_log := '\033[33m[warn] \033[0m'
-	version := 'v0.0.3'
+	version := 'v0.1.0'
 
 
 	mut args := os.args.clone()
@@ -63,17 +63,23 @@ fn main() {
                  
 	mut connect := true
 	for v in 1..4 {
-
 		if options(args, long_options[v]) != 'false' {
 			connect = false
 			if long_options[v].abbr == '-e' {
-				println('${warn_log}这里好麻烦哦')
+				println('${warn_log}没写完, 看test文件自己补或者等更新吧')
+				exit(1)
 			}
 			if long_options[v].abbr == '-lp' {
-				set_sever(options(args, long_options[v]))
+				set_sever(options(args, long_options[v]), false)
 			}
 			if long_options[v].abbr == '-klp' {
-				
+				/**********************************
+				 * statement:
+				 * keep_listen_port会创建多个子进程
+				 * 同时监听多个程序时发信会混乱
+				 * 这里用于配合execute实现多环境访问
+				***********************************/
+				set_sever(options(args, long_options[v]), true)
 			}
 		}
 	}
@@ -92,31 +98,14 @@ fn main() {
         		println('${false_log}${addr}:${port} not found.')
         		exit(1)
         	}
-        	
+        
 		spawn load_data(mut socket)
-        	
-		mut data := 'test'
-		for{
-			data = read_line('') or { '' }
-			
-			// close the socket
-			if data == ':q' {
-				data = '${true_log}closing the socket...'
-				for_free(data, mut socket)
-				exit(1)
-			}
-			defer {
-        			println('${true_log}close the socket.')
-        			for_free(data, mut socket)
-        		}
-        	
-			socket.write_string('${data}\n') or { return }
-		}
+		send_message(mut socket)
 	}
 }
 
 // (socket)load data.
-pub fn load_data(mut socket net.TcpConn) {
+fn load_data(mut socket net.TcpConn) {
 	for {
 		data := socket.read_line()
         	print(data)

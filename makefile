@@ -1,5 +1,5 @@
-SRC_FILES_V = src/netcat.v
-SRC_FILES_C = src/netcat.c
+SRC_FILES_V = ./src/netcat.v
+SRC_FILES_C = ./src/netcat.c
 OUT_NAME = ./bin/nc
 
 CC1 = v
@@ -9,6 +9,14 @@ exploit: _compile_static
 run: _run_outfile
 clean: _clean_outfile
 c: _make_v_to_c
+
+
+_uname:
+	uname
+
+hello:
+	echo 'hello'
+	
 
 _make_v_to_c:
 	@echo "[*] Try make $(SRC_FILES_V) to $(SRC_FILES_C)."
