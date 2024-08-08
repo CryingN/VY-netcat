@@ -90,7 +90,7 @@ pub fn send_message(mut socket net.TcpConn) {
                         data += '\n'
                 }
 
-	        socket.write_string('${data}')
+	        socket.write_string('${data}') or { continue }
         }
 }
 

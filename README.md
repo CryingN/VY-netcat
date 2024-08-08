@@ -71,7 +71,7 @@ cd bin
 
 ```bash
 [root_cn@archlinux vy-netcat]$ ./nc -h
-VY netcat v0.1.0, the network tools suitable for CTF.
+VY netcat v0.1.1, the network tools suitable for CTF.
 Basic usages:
  connect to somewhere:  nc [addr] [port]
  listen to somewhere:   nc -lp [port]

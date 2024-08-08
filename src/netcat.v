@@ -13,7 +13,7 @@ fn main() {
 	false_log := '\033[31m[false] \033[0m'
 	true_log := '\033[32m[true] \033[0m'
 	warn_log := '\033[33m[warn] \033[0m'
-	version := 'v0.1.0'
+	version := 'v0.1.1'
 
 
 	mut args := os.args.clone()

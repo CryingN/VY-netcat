@@ -2400,6 +2400,12 @@ typedef struct thread_arg_client__handle_client {
 } thread_arg_client__handle_client;
  void* client__handle_client_thread_wrapper(thread_arg_client__handle_client *arg);
 
+typedef struct thread_arg_client__send_message {
+	void (*fn) (net__TcpConn*);
+	net__TcpConn* arg1;
+} thread_arg_client__send_message;
+ void* client__send_message_thread_wrapper(thread_arg_client__send_message *arg);
+
 typedef struct thread_arg_main__load_data {
 	void (*fn) (net__TcpConn*);
 	net__TcpConn* arg1;
@@ -4137,11 +4143,12 @@ VV_LOCAL_SYMBOL _result_bool net__UdpSocket_select(net__UdpSocket* s, net__Selec
 VV_LOCAL_SYMBOL _result_net__Addr net__UdpSocket_remote(net__UdpSocket* s);
 _result_u16 net__validate_port(int port);
 _result_multi_return_string_u16 net__split_address(string addr);
-void client__set_sever(string port);
+void client__set_sever(string port, bool keep);
 VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket);
+void client__send_message(net__TcpConn* socket);
 void client__for_free(string data, net__TcpConn* socket);
 VV_LOCAL_SYMBOL void main__main(void);
-void main__load_data(net__TcpConn* socket);
+VV_LOCAL_SYMBOL void main__load_data(net__TcpConn* socket);
 VV_LOCAL_SYMBOL void main__help(Array_cmd__CmdOption long_options, string version);
 
 static string time__FormatTime_str(time__FormatTime it); // auto
@@ -5056,6 +5063,11 @@ struct _hash__Hash64er_interface_methods {
 
 // V gowrappers:
 void* client__handle_client_thread_wrapper(thread_arg_client__handle_client *arg) {
+	arg->fn(arg->arg1);
+	_v_free(arg);
+	return 0;
+}
+void* client__send_message_thread_wrapper(thread_arg_client__send_message *arg) {
 	arg->fn(arg->arg1);
 	_v_free(arg);
 	return 0;
@@ -28049,12 +28061,7 @@ _result_multi_return_string_u16 net__split_address(string addr) {
 	return _t3;
 }
 
-void client__set_sever(string port) {
-	bool client__set_sever_defer_0 = false;
-	string true_log;
-	string data;
-	net__TcpConn* socket;
-	true_log = _SLIT("\033[32m[true] \033[0m");
+void client__set_sever(string port, bool keep) {
 	_result_net__TcpListener_ptr _t1 = net__listen_tcp(net__AddrFamily__ip6, string__plus(_SLIT(":"), port), ((net__ListenOptions){.dualstack = true,.backlog = 128,}));
 	if (_t1.is_error) {
 		IError err = _t1.err;
@@ -28065,66 +28072,69 @@ void client__set_sever(string port) {
 	}
 	
  	net__TcpListener* server =  (*(net__TcpListener**)_t1.data);
-	data = _SLIT("test");
-	for (;;) {
-		_result_net__TcpConn_ptr _t2 = net__TcpListener_accept(server);
-		if (_t2.is_error) {
-			IError err = _t2.err;
-			_v_panic(IError_str(err));
+	if (keep) {
+		for (;;) {
+			_result_net__TcpConn_ptr _t2 = net__TcpListener_accept(server);
+			if (_t2.is_error) {
+				IError err = _t2.err;
+				_v_exit(1);
+				VUNREACHABLE();
+			;
+			}
+			
+ 			net__TcpConn* socket =  (*(net__TcpConn**)_t2.data);
+			// start go
+			thread_arg_client__handle_client *arg__t3 = (thread_arg_client__handle_client *) _v_malloc(sizeof(thread_arg_client__handle_client));
+			arg__t3->fn = client__handle_client;
+			arg__t3->arg1 = socket;
+			pthread_t thread__t3;
+			pthread_attr_t thread__t3_attributes;
+			pthread_attr_init(&thread__t3_attributes);
+			pthread_attr_setstacksize(&thread__t3_attributes, 8388608); // fn: client.handle_client
+			int _t3_thr_res = pthread_create(&thread__t3, &thread__t3_attributes, (void*)client__handle_client_thread_wrapper, arg__t3);
+			if (_t3_thr_res) panic_error_number(tos3("`go client__handle_client()`: "), _t3_thr_res);
+			pthread_detach(thread__t3);
+			// end go
+			;
+			// start go
+			thread_arg_client__send_message *arg__t5 = (thread_arg_client__send_message *) _v_malloc(sizeof(thread_arg_client__send_message));
+			arg__t5->fn = client__send_message;
+			arg__t5->arg1 = socket;
+			pthread_t thread__t5;
+			pthread_attr_t thread__t5_attributes;
+			pthread_attr_init(&thread__t5_attributes);
+			pthread_attr_setstacksize(&thread__t5_attributes, 8388608); // fn: client.send_message
+			int _t5_thr_res = pthread_create(&thread__t5, &thread__t5_attributes, (void*)client__send_message_thread_wrapper, arg__t5);
+			if (_t5_thr_res) panic_error_number(tos3("`go client__send_message()`: "), _t5_thr_res);
+			pthread_detach(thread__t5);
+			// end go
+			;
+		}
+	} else {
+		_result_net__TcpConn_ptr _t7 = net__TcpListener_accept(server);
+		if (_t7.is_error) {
+			IError err = _t7.err;
+			_v_exit(1);
 			VUNREACHABLE();
 		;
 		}
 		
- 		socket =  (*(net__TcpConn**)_t2.data);
+ 		net__TcpConn* socket =  (*(net__TcpConn**)_t7.data);
 		// start go
-		thread_arg_client__handle_client *arg__t3 = (thread_arg_client__handle_client *) _v_malloc(sizeof(thread_arg_client__handle_client));
-		arg__t3->fn = client__handle_client;
-		arg__t3->arg1 = socket;
-		pthread_t thread__t3;
-		pthread_attr_t thread__t3_attributes;
-		pthread_attr_init(&thread__t3_attributes);
-		pthread_attr_setstacksize(&thread__t3_attributes, 8388608); // fn: client.handle_client
-		int _t3_thr_res = pthread_create(&thread__t3, &thread__t3_attributes, (void*)client__handle_client_thread_wrapper, arg__t3);
-		if (_t3_thr_res) panic_error_number(tos3("`go client__handle_client()`: "), _t3_thr_res);
-		pthread_detach(thread__t3);
+		thread_arg_client__handle_client *arg__t8 = (thread_arg_client__handle_client *) _v_malloc(sizeof(thread_arg_client__handle_client));
+		arg__t8->fn = client__handle_client;
+		arg__t8->arg1 = socket;
+		pthread_t thread__t8;
+		pthread_attr_t thread__t8_attributes;
+		pthread_attr_init(&thread__t8_attributes);
+		pthread_attr_setstacksize(&thread__t8_attributes, 8388608); // fn: client.handle_client
+		int _t8_thr_res = pthread_create(&thread__t8, &thread__t8_attributes, (void*)client__handle_client_thread_wrapper, arg__t8);
+		if (_t8_thr_res) panic_error_number(tos3("`go client__handle_client()`: "), _t8_thr_res);
+		pthread_detach(thread__t8);
 		// end go
 		;
-		for (;;) {
-			_result_string _t5 = readline__read_line(_SLIT(""));
-			if (_t5.is_error) {
-				IError err = _t5.err;
-				*(string*) _t5.data = _SLIT("");
-			}
-			
- 			data =  (*(string*)_t5.data);
-			if (string__eq(data, _SLIT(":q"))) {
-				data =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("closing the socket..."), 0, { .d_c = 0 }}}));
-				client__for_free(data, socket);
-				_v_exit(1);
-				VUNREACHABLE();
-			}
-			client__set_sever_defer_0 = true;
-			_result_int _t6 = net__TcpConn_write_string(socket,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = data}}, {_SLIT("\n"), 0, { .d_c = 0 }}})));
-			if (_t6.is_error) {
-				IError err = _t6.err;
-					// Defer begin
-					if (client__set_sever_defer_0) {
-						println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
-						client__for_free(data, socket);
-					}
-					// Defer end
-				return;
-			}
-			
-  (*(int*)_t6.data);
-		}
+		client__send_message(socket);
 	}
-	// Defer begin
-	if (client__set_sever_defer_0) {
-		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
-		client__for_free(data, socket);
-	}
-	// Defer end
 }
 
 VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
@@ -28148,7 +28158,7 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 					_result_void _t2 = net__TcpConn_close(socket);
 					if (_t2.is_error) {
 						IError err = _t2.err;
-						_v_panic(IError_str(err));
+						_v_exit(1);
 						VUNREACHABLE();
 					;
 					}
@@ -28171,7 +28181,7 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 					_result_void _t3 = net__TcpConn_close(socket);
 					if (_t3.is_error) {
 						IError err = _t3.err;
-						_v_panic(IError_str(err));
+						_v_exit(1);
 						VUNREACHABLE();
 					;
 					}
@@ -28193,12 +28203,53 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 		_result_void _t4 = net__TcpConn_close(socket);
 		if (_t4.is_error) {
 			IError err = _t4.err;
-			_v_panic(IError_str(err));
+			_v_exit(1);
 			VUNREACHABLE();
 		;
 		}
 		
  ;
+	}
+	// Defer end
+}
+
+void client__send_message(net__TcpConn* socket) {
+	bool client__send_message_defer_0 = false;
+	string true_log;
+	string data;
+	true_log = _SLIT("\033[32m[true] \033[0m");
+	data = _SLIT("test");
+	for (;;) {
+		_result_string _t1 = readline__read_line(_SLIT(""));
+		if (_t1.is_error) {
+			IError err = _t1.err;
+			*(string*) _t1.data = _SLIT("");
+		}
+		
+ 		data =  (*(string*)_t1.data);
+		println(data);
+		if (string__eq(data, _SLIT(":q"))) {
+			data =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("closing the socket..."), 0, { .d_c = 0 }}}));
+			client__for_free(data, socket);
+			_v_exit(1);
+			VUNREACHABLE();
+		}
+		client__send_message_defer_0 = true;
+		if (string__eq(os__user_os(), _SLIT("linux"))) {
+			data = string__plus(data, _SLIT("\n"));
+		}
+		_result_int _t2 = net__TcpConn_write_string(socket,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = data}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		if (_t2.is_error) {
+			IError err = _t2.err;
+			continue;
+		}
+		
+  (*(int*)_t2.data);
+	}
+	// Defer begin
+	if (client__send_message_defer_0) {
+		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
+		client__for_free(data, socket);
 	}
 	// Defer end
 }
@@ -28209,7 +28260,7 @@ void client__for_free(string data, net__TcpConn* socket) {
 	_result_void _t1 = net__TcpConn_close(socket);
 	if (_t1.is_error) {
 		IError err = _t1.err;
-		_v_panic(IError_str(err));
+		_v_exit(1);
 		VUNREACHABLE();
 	;
 	}
@@ -28218,17 +28269,13 @@ void client__for_free(string data, net__TcpConn* socket) {
 }
 
 VV_LOCAL_SYMBOL void main__main(void) {
-	bool main__main_defer_0 = false;
-	string true_log;
-	string data;
-	net__TcpConn* socket;
 	string false_log = _SLIT("\033[31m[false] \033[0m");
-	true_log = _SLIT("\033[32m[true] \033[0m");
+	string true_log = _SLIT("\033[32m[true] \033[0m");
 	string warn_log = _SLIT("\033[33m[warn] \033[0m");
-	string version = _SLIT("v0.0.3");
+	string version = _SLIT("v0.1.0");
 	Array_string args = array_clone_to_depth(&_const_os__args, 0);
 	if (args.len == 1) {
-		data = string__plus((*(string*)array_get(args, 0)), _SLIT(" "));
+		string data = string__plus((*(string*)array_get(args, 0)), _SLIT(" "));
 		_result_string _t1 = readline__read_line(_SLIT("Cmd line:"));
 		if (_t1.is_error) {
 			IError err = _t1.err;
@@ -28249,12 +28296,15 @@ VV_LOCAL_SYMBOL void main__main(void) {
 		if (!string__eq(cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v))), _SLIT("false"))) {
 			connect = false;
 			if (string__eq((*(cmd__CmdOption*)array_get(long_options, v)).abbr, _SLIT("-e"))) {
-				println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = warn_log}}, {_SLIT("\350\277\231\351\207\214\345\245\275\351\272\273\347\203\246\345\223\246"), 0, { .d_c = 0 }}})));
+				println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = warn_log}}, {_SLIT("\346\262\241\345\206\231\345\256\214, \347\234\213test\346\226\207\344\273\266\350\207\252\345\267\261\350\241\245\346\210\226\350\200\205\347\255\211\346\233\264\346\226\260\345\220\247"), 0, { .d_c = 0 }}})));
+				_v_exit(1);
+				VUNREACHABLE();
 			}
 			if (string__eq((*(cmd__CmdOption*)array_get(long_options, v)).abbr, _SLIT("-lp"))) {
-				client__set_sever(cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v))));
+				client__set_sever(cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v))), false);
 			}
 			if (string__eq((*(cmd__CmdOption*)array_get(long_options, v)).abbr, _SLIT("-klp"))) {
+				client__set_sever(cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v))), true);
 			}
 		}
 	}
@@ -28276,7 +28326,7 @@ VV_LOCAL_SYMBOL void main__main(void) {
 		;
 		}
 		
- 		socket =  (*(net__TcpConn**)_t2.data);
+ 		net__TcpConn* socket =  (*(net__TcpConn**)_t2.data);
 		// start go
 		thread_arg_main__load_data *arg__t3 = (thread_arg_main__load_data *) _v_malloc(sizeof(thread_arg_main__load_data));
 		arg__t3->fn = main__load_data;
@@ -28290,46 +28340,11 @@ VV_LOCAL_SYMBOL void main__main(void) {
 		pthread_detach(thread__t3);
 		// end go
 		;
-		data = _SLIT("test");
-		for (;;) {
-			_result_string _t5 = readline__read_line(_SLIT(""));
-			if (_t5.is_error) {
-				IError err = _t5.err;
-				*(string*) _t5.data = _SLIT("");
-			}
-			
- 			data =  (*(string*)_t5.data);
-			if (string__eq(data, _SLIT(":q"))) {
-				data =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("closing the socket..."), 0, { .d_c = 0 }}}));
-				client__for_free(data, socket);
-				_v_exit(1);
-				VUNREACHABLE();
-			}
-			main__main_defer_0 = true;
-			_result_int _t6 = net__TcpConn_write_string(socket,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = data}}, {_SLIT("\n"), 0, { .d_c = 0 }}})));
-			if (_t6.is_error) {
-				IError err = _t6.err;
-					// Defer begin
-					if (main__main_defer_0) {
-						println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
-						client__for_free(data, socket);
-					}
-					// Defer end
-				return;
-			}
-			
-  (*(int*)_t6.data);
-		}
+		client__send_message(socket);
 	}
-	// Defer begin
-	if (main__main_defer_0) {
-		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
-		client__for_free(data, socket);
-	}
-	// Defer end
 }
 
-void main__load_data(net__TcpConn* socket) {
+VV_LOCAL_SYMBOL void main__load_data(net__TcpConn* socket) {
 	for (;;) {
 		string data = net__TcpConn_read_line(socket);
 		print(data);
