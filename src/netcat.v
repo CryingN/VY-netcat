@@ -7,12 +7,9 @@ import os
 import cmd { options, set_options, CmdOption }
 import net
 import client { set_sever, send_message, for_free }
+import log
 
 fn main() {
-
-	false_log := '\033[31m[false] \033[0m'
-	true_log := '\033[32m[true] \033[0m'
-	warn_log := '\033[33m[warn] \033[0m'
 	version := 'v0.1.1'
 
 
@@ -66,7 +63,7 @@ fn main() {
 		if options(args, long_options[v]) != 'false' {
 			connect = false
 			if long_options[v].abbr == '-e' {
-				println('${warn_log}没写完, 看test文件自己补或者等更新吧')
+				println('${log.warn_log}没写完, 看test文件自己补或者等更新吧')
 				exit(1)
 			}
 			if long_options[v].abbr == '-lp' {
@@ -86,7 +83,7 @@ fn main() {
 
 	if connect {	
 		if args.len < 3 {
-				println('${false_log}Please refer to the help for use.')
+				println('${log.false_log}Please refer to the help for use.')
                 help(long_options, version)
                 exit(1)
         }
@@ -95,7 +92,7 @@ fn main() {
 		port := args[2]
         	
 		mut socket := net.dial_tcp(addr+':'+port) or {
-        		println('${false_log}${addr}:${port} not found.')
+        		println('${log.false_log}${addr}:${port} not found.')
         		exit(1)
         	}
         

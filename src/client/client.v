@@ -4,11 +4,12 @@ import readline { read_line }
 import net
 import io
 import os { user_os }
+import log
 
 pub fn set_sever(port string, keep bool) {
 	
 	mut server := net.listen_tcp(.ip6, ':' + port) or {
-		println('\033[31m[false] \033[0mThe port: ${port} listening failed.')
+		println('${log.false_log}The port: ${port} listening failed.')
                 exit(1)
 	}
         
@@ -56,7 +57,6 @@ fn handle_client(mut socket net.TcpConn) {
 
 // keep to send messages.
 pub fn send_message(mut socket net.TcpConn) {
-        true_log := '\033[32m[true] \033[0m'
         mut data := 'test' 
         /******************************************
          * warning:
@@ -66,17 +66,16 @@ pub fn send_message(mut socket net.TcpConn) {
         ******************************************/
         for {
                 data = read_line('') or { '' }
-                println(data)
 
                 // close the socket
 	        if data == ':q' {
-		        data = '${true_log}closing the socket...'
+		        data = '${log.true_log}closing the socket...'
 		        for_free(data, mut socket)
 		        exit(1)
         	}
 
 	        defer {
-        	        println('${true_log}close the socket.')
+        	        println('${log.true_log}close the socket.')
         	        for_free(data, mut socket)
                 }
                 
@@ -90,18 +89,24 @@ pub fn send_message(mut socket net.TcpConn) {
                         data += '\n'
                 }
 
-	        socket.write_string('${data}') or { continue }
+	        socket.write_string('${data}') or { 
+			
+        	        println('${log.warn_log}close the socket.')
+			exit(1)
+		}
         }
 }
 
 
 // close the socket.
+
 pub fn for_free(data string, mut socket net.TcpConn) {
-        println(data)
+	println(data)
         unsafe{
                 data.free()
         }
-        socket.close() or { exit(1) }
+        // socket.close() or { exit(1) }
+        exit(1)
 }
 
 
