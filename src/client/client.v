@@ -1,9 +1,8 @@
 module client
 
-import readline { read_line }
 import net
 import io
-import os { user_os }
+import os { user_os, input }
 import log
 
 pub fn set_sever(port string, keep bool) {
@@ -65,7 +64,7 @@ pub fn send_message(mut socket net.TcpConn) {
          * I think the problem comes from vlang
         ******************************************/
         for {
-                data = read_line('') or { '' }
+                data = input('') + '\n'
 
                 // close the socket
 	        if data == ':q' {
@@ -84,10 +83,16 @@ pub fn send_message(mut socket net.TcpConn) {
                  * 这里被写死了
                  * 我希望有方法能让代码交叉编译
                  * 但是现在无法解决
+                 * 
+                 * when use os.inupt() not readline.read_line(), 
+                 * we shouldn't add '\n' for linux.
                 *******************************/
+                /*
                 if user_os() == 'linux' {
                         data += '\n'
                 }
+                */
+
 
 	        socket.write_string('${data}') or { 
 			

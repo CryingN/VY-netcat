@@ -24,12 +24,13 @@
 | 帮助菜单 | 已解决  | sudopacman |
 | 基础连接 | 已解决  | sudopacman |
 | 支持gcc编译 | 已解决 | sudopacman |
-| 交叉编译 | 存在bug(module client) |  |
+| 交叉编译 | 已回避 | sudopacman |
 | 兼容windows | 最低程度 | sudopacman |
 | socket崩溃问题 | 未解决 |  |
 | 指令执行 | 未解决  |            |
 | 监听端口 | 已解决  | sudopacman |
 | 保持监听 | 已解决  | sudopacman |
+| `ctrl`+`C`退出 | 已解决 | sudopacman |
 
 # 使用
 
@@ -74,7 +75,7 @@ cd bin
 
 ```bash
 [root_cn@archlinux vy-netcat]$ ./nc -h
-VY netcat v0.1.1, the network tools suitable for CTF.
+VY netcat v0.1.4, the network tools suitable for CTF.
 Basic usages:
  connect to somewhere:  nc [addr] [port]
  listen to somewhere:   nc -lp [port]

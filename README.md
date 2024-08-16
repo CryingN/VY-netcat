@@ -22,12 +22,13 @@ VY-netcat is a network tool written in the [vlang](https://vlang.io/) language, 
 |   Help Menu  |	Solved  |   sudopacman  |
 |   Basic Connection	|   Solved	|   sudopacman  |
 |   GCC Compilation Support    |	Solved  |	sudopacman  |
-|   Cross-Compilation	|   Bug (module client) |   |	
+|   Cross-Compilation	| hidden | sudopacman |	
 |   Windows Compatibility   |	Minimal |	sudopacman  |
 |   Socket Crash Issue  |	Unsolved    |   |	
 |   Command Execution   |	Unsolved	|
 |   Listen on Port  |	Solved  |	sudopacman  |
-|   Keep Listening	|    Solved	|   sudopacman  |
+|   Keep Listening	|   Solved	|   sudopacman  |
+|   `ctrl`+`C` to exit | Solved |   sudopacman  |
 
 # Usage
 
@@ -72,7 +73,7 @@ Below is the description from the `help` menu.
 
 ```bash
 [root_cn@archlinux vy-netcat]$ ./nc -h  
-VY netcat v0.1.1, the network tools suitable for CTF.  
+VY netcat v0.1.4, the network tools suitable for CTF.  
 Basic usages:  
  connect to somewhere:  nc [addr] [port]  
  listen to somewhere:   nc -lp [port]  

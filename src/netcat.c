@@ -91,8 +91,8 @@ typedef union StrIntpMem StrIntpMem;
 typedef struct StrIntpCgenData StrIntpCgenData;
 typedef struct StrIntpData StrIntpData;
 typedef struct cmd__CmdOption cmd__CmdOption;
-typedef struct term__termios__Termios term__termios__Termios;
 typedef struct strings__textscanner__TextScanner strings__textscanner__TextScanner;
+typedef struct term__termios__Termios term__termios__Termios;
 typedef union net__conv__ConversionUnion net__conv__ConversionUnion;
 typedef struct time__DateTimeParser time__DateTimeParser;
 typedef struct time__TimeParseError time__TimeParseError;
@@ -126,13 +126,10 @@ typedef struct os__MkdirParams os__MkdirParams;
 typedef struct os__Uname os__Uname;
 typedef struct os__Stat os__Stat;
 typedef struct os__Process os__Process;
-typedef struct term__Coord term__Coord;
 typedef struct rand__config__PRNGConfigStruct rand__config__PRNGConfigStruct;
 typedef struct rand__config__NormalConfigStruct rand__config__NormalConfigStruct;
 typedef struct rand__config__ShuffleConfigStruct rand__config__ShuffleConfigStruct;
 typedef struct rand__wyrand__WyRandRNG rand__wyrand__WyRandRNG;
-typedef struct readline__Winsize readline__Winsize;
-typedef struct readline__Readline readline__Readline;
 typedef struct io__util__TempFileOptions io__util__TempFileOptions;
 typedef struct io__util__TempDirOptions io__util__TempDirOptions;
 typedef union net__AddrData net__AddrData;
@@ -167,8 +164,6 @@ typedef struct _result_os__Stat _result_os__Stat;
 typedef struct _result_strings__Builder _result_strings__Builder;
 typedef struct _result_os__Result _result_os__Result;
 typedef struct _result_anon_fn_os__signal _result_anon_fn_os__signal;
-typedef struct _result_term__Coord _result_term__Coord;
-typedef struct _result_Array_rune _result_Array_rune;
 typedef struct _result_u32 _result_u32;
 typedef struct _result_f32 _result_f32;
 typedef struct _result_bool _result_bool;
@@ -189,7 +184,6 @@ typedef struct _option_string _option_string;
 typedef struct _option_multi_return_string_string _option_multi_return_string_string;
 typedef struct _option_int _option_int;
 typedef struct _option_u8 _option_u8;
-typedef struct _option_rune _option_rune;
 
  // V preincludes:
 
@@ -1091,21 +1085,6 @@ static inline uint64_t wy2u0k(uint64_t r, uint64_t k){ _wymum(&r,&k); return k; 
 #endif
 
 
-// added by module `term`, file: term_nix.c.v:6:
-
-#if defined(__has_include)
-
-#if __has_include(<sys/ioctl.h>)
-#include <sys/ioctl.h>
-#else
-#error VERROR_MESSAGE Header file <sys/ioctl.h>, needed for module `term` was not found. Please install the corresponding development headers.
-#endif
-
-#else
-#include <sys/ioctl.h>
-#endif
-
-
 // added by module `net`, file: aasocket.c.v:19:
 
 #if defined(__has_include)
@@ -1402,29 +1381,6 @@ typedef enum {
 }  os__Signal;
 
 typedef enum {
-	readline__Action__eof, // 
-	readline__Action__nothing, // +1
-	readline__Action__insert_character, // +2
-	readline__Action__commit_line, // +3
-	readline__Action__delete_left, // +4
-	readline__Action__delete_right, // +5
-	readline__Action__delete_word_left, // +6
-	readline__Action__delete_line, // +7
-	readline__Action__move_cursor_left, // +8
-	readline__Action__move_cursor_right, // +9
-	readline__Action__move_cursor_start, // +10
-	readline__Action__move_cursor_end, // +11
-	readline__Action__move_cursor_word_left, // +12
-	readline__Action__move_cursor_word_right, // +13
-	readline__Action__history_previous, // +14
-	readline__Action__history_next, // +15
-	readline__Action__overwrite, // +16
-	readline__Action__clear_screen, // +17
-	readline__Action__suspend, // +18
-	readline__Action__completion, // +19
-}  readline__Action;
-
-typedef enum {
 	net__Select__read, // 
 	net__Select__write, // +1
 	net__Select__except, // +2
@@ -1563,7 +1519,6 @@ typedef array Array_int;
 typedef array Array_cmd__CmdOption;
 typedef array Array_u16;
 typedef map Map_string_int;
-typedef array Array_Array_rune;
 typedef map Map_string_string;
 typedef array Array_char_ptr;
 typedef int Array_fixed_int_3 [3];
@@ -1577,7 +1532,6 @@ typedef char Array_fixed_char_108 [108];
 typedef u8 Array_fixed_u8_8 [8];
 typedef u8 Array_fixed_u8_108 [108];
 typedef array Array_IError;
-typedef int Array_fixed_int_10 [10];
 typedef array Array_io__Writer;
 typedef array Array_u32;
 typedef u8 Array_fixed_u8_5 [5];
@@ -1599,6 +1553,7 @@ typedef u64 Array_fixed_u64_31 [31];
 typedef voidptr Array_fixed_voidptr_100 [100];
 typedef u8 Array_fixed_u8_1000 [1000];
 typedef u8 Array_fixed_u8_17 [17];
+typedef int Array_fixed_int_10 [10];
 typedef int Array_fixed_int_20 [20];
 typedef array Array_StrIntpType;
 typedef string Array_fixed_string_7 [7];
@@ -1628,12 +1583,10 @@ typedef void (*FnExitCb)();
 typedef void (*anon_fn_voidptr_voidptr)(voidptr,voidptr);
 typedef void (*FnGC_WarnCB)(char*,usize);
 typedef int (*FnSortCB)(voidptr,voidptr);
-typedef Array_string (*anon_fn_string__Array_string)(string);
 typedef void (*anon_fn_string)(string);
 typedef void (*os__FnWalkContextCB)(voidptr,string);
 typedef void (*os__SignalHandler)(os__Signal);
 typedef void (*os__FN_SA_Handler)(int);
-typedef string (*anon_fn_string__string)(string);
 struct io__Reader {
 	union {
 		void* _object;
@@ -1937,13 +1890,6 @@ union strconv__Uf64 {
 	u64 u;
 };
 
-struct readline__Winsize {
-	u16 ws_row;
-	u16 ws_col;
-	u16 ws_xpixel;
-	u16 ws_ypixel;
-};
-
 struct os__NotExpected {
 	string cause;
 	int code;
@@ -2032,18 +1978,13 @@ struct net__ListenOptions {
 	bool dualstack;
 	int backlog;
 };
-typedef term__termios__Cc Array_fixed_term__termios__Cc_32 [32];
-
-struct term__Coord {
-	int x;
-	int y;
-};
 
 struct strings__textscanner__TextScanner {
 	string input;
 	int ilen;
 	int pos;
 };
+typedef term__termios__Cc Array_fixed_term__termios__Cc_32 [32];
 
 union net__conv__ConversionUnion {
 	u64 as_int64;
@@ -2146,6 +2087,13 @@ struct StrIntpData {
 	StrIntpMem d;
 };
 
+struct os__FileMode {
+	os__FileType typ;
+	os__FilePermission owner;
+	os__FilePermission group;
+	os__FilePermission others;
+};
+
 struct term__termios__Termios {
 	term__termios__TcFlag c_iflag;
 	term__termios__TcFlag c_oflag;
@@ -2155,13 +2103,6 @@ struct term__termios__Termios {
 	Array_fixed_term__termios__Cc_32 c_cc;
 	term__termios__Speed c_ispeed;
 	term__termios__Speed c_ospeed;
-};
-
-struct os__FileMode {
-	os__FileType typ;
-	os__FilePermission owner;
-	os__FilePermission group;
-	os__FilePermission others;
 };
 
 struct os__Process {
@@ -2221,25 +2162,6 @@ struct net__TcpConn {
 	time__Duration read_timeout;
 	time__Duration write_timeout;
 	bool is_blocking;
-};
-
-struct readline__Readline {
-	bool is_raw;
-	term__termios__Termios orig_termios;
-	Array_rune current;
-	int cursor;
-	bool overwrite;
-	int cursor_row_offset;
-	string prompt;
-	int prompt_offset;
-	Array_Array_rune previous_lines;
-	bool skip_empty;
-	int search_index;
-	bool is_tty;
-	Array_rune last_prefix_completion;
-	int last_completion_offset;
-	Array_string completion_list;
-	anon_fn_string__Array_string completion_callback;
 };
 
 struct os__FileInfo {
@@ -2444,12 +2366,6 @@ struct _option_u8 {
 	byte data[sizeof(u8) > 1 ? sizeof(u8) : 1];
 };
 
-struct _option_rune {
-	byte state;
-	IError err;
-	byte data[sizeof(rune) > 1 ? sizeof(rune) : 1];
-};
-
 
 // V result_xxx definitions:
 struct _result_int {
@@ -2564,18 +2480,6 @@ struct _result_anon_fn_os__signal {
 	bool is_error;
 	IError err;
 	byte data[sizeof(void*) > 1 ? sizeof(void*) : 1];
-};
-
-struct _result_term__Coord {
-	bool is_error;
-	IError err;
-	byte data[sizeof(term__Coord) > 1 ? sizeof(term__Coord) : 1];
-};
-
-struct _result_Array_rune {
-	bool is_error;
-	IError err;
-	byte data[sizeof(Array_rune) > 1 ? sizeof(Array_rune) : 1];
 };
 
 struct _result_u32 {
@@ -3335,13 +3239,6 @@ void ArrayFlags_toggle(ArrayFlags* e, ArrayFlags flag);
 ArrayFlags ArrayFlags__static__zero(void);
 string cmd__options(Array_string args, cmd__CmdOption long_option);
 bool cmd__set_options(Array_string args, cmd__CmdOption long_option);
-term__termios__TcFlag term__termios__flag(int value);
-term__termios__TcFlag term__termios__invert(term__termios__TcFlag value);
-int term__termios__tcgetattr(int fd, term__termios__Termios* termios_p);
-int term__termios__tcsetattr(int fd, int optional_actions, term__termios__Termios* termios_p);
-int term__termios__ioctl(int fd, u64 request, voidptr arg);
-int term__termios__set_state(int fd, term__termios__Termios new_state);
-void term__termios__Termios_disable_echo(term__termios__Termios* t);
 strings__textscanner__TextScanner strings__textscanner__new(string input);
 void strings__textscanner__TextScanner_free(strings__textscanner__TextScanner* ss);
 int strings__textscanner__TextScanner_remaining(strings__textscanner__TextScanner* ss);
@@ -3357,6 +3254,13 @@ int strings__textscanner__TextScanner_peek_back_n(strings__textscanner__TextScan
 int strings__textscanner__TextScanner_current(strings__textscanner__TextScanner* ss);
 void strings__textscanner__TextScanner_reset(strings__textscanner__TextScanner* ss);
 void strings__textscanner__TextScanner_goto_end(strings__textscanner__TextScanner* ss);
+term__termios__TcFlag term__termios__flag(int value);
+term__termios__TcFlag term__termios__invert(term__termios__TcFlag value);
+int term__termios__tcgetattr(int fd, term__termios__Termios* termios_p);
+int term__termios__tcsetattr(int fd, int optional_actions, term__termios__Termios* termios_p);
+int term__termios__ioctl(int fd, u64 request, voidptr arg);
+int term__termios__set_state(int fd, term__termios__Termios new_state);
+void term__termios__Termios_disable_echo(term__termios__Termios* t);
 u64 net__conv__htn64(u64 host);
 f32 net__conv__htonf32(f32 host);
 f64 net__conv__htonf64(f64 host);
@@ -3799,96 +3703,6 @@ VV_LOCAL_SYMBOL u32 rand__seed__nr_next(u32 prev);
 Array_u32 rand__seed__time_seed_array(int count);
 u32 rand__seed__time_seed_32(void);
 u64 rand__seed__time_seed_64(void);
-string term__format_esc(string code);
-string term__format(string msg, string open, string close);
-string term__format_rgb(int r, int g, int b, string msg, string open, string close);
-string term__rgb(int r, int g, int b, string msg);
-string term__bg_rgb(int r, int g, int b, string msg);
-string term__hex(int hex, string msg);
-string term__bg_hex(int hex, string msg);
-string term__reset(string msg);
-string term__bold(string msg);
-string term__dim(string msg);
-string term__italic(string msg);
-string term__underline(string msg);
-string term__slow_blink(string msg);
-string term__rapid_blink(string msg);
-string term__inverse(string msg);
-string term__hidden(string msg);
-string term__strikethrough(string msg);
-string term__black(string msg);
-string term__red(string msg);
-string term__green(string msg);
-string term__yellow(string msg);
-string term__blue(string msg);
-string term__magenta(string msg);
-string term__cyan(string msg);
-string term__white(string msg);
-string term__bg_black(string msg);
-string term__bg_red(string msg);
-string term__bg_green(string msg);
-string term__bg_yellow(string msg);
-string term__bg_blue(string msg);
-string term__bg_magenta(string msg);
-string term__bg_cyan(string msg);
-string term__bg_white(string msg);
-string term__gray(string msg);
-string term__bright_black(string msg);
-string term__bright_red(string msg);
-string term__bright_green(string msg);
-string term__bright_yellow(string msg);
-string term__bright_blue(string msg);
-string term__bright_magenta(string msg);
-string term__bright_cyan(string msg);
-string term__bright_white(string msg);
-string term__bright_bg_black(string msg);
-string term__bright_bg_red(string msg);
-string term__bright_bg_green(string msg);
-string term__bright_bg_yellow(string msg);
-string term__bright_bg_blue(string msg);
-string term__bright_bg_magenta(string msg);
-string term__bright_bg_cyan(string msg);
-string term__bright_bg_white(string msg);
-string term__highlight_command(string command);
-void term__set_cursor_position(term__Coord c);
-void term__move(int n, string direction);
-void term__cursor_up(int n);
-void term__cursor_down(int n);
-void term__cursor_forward(int n);
-void term__cursor_back(int n);
-void term__erase_display(string t);
-void term__erase_toend(void);
-void term__erase_tobeg(void);
-void term__erase_clear(void);
-void term__erase_del_clear(void);
-void term__erase_line(string t);
-void term__erase_line_toend(void);
-void term__erase_line_tobeg(void);
-void term__erase_line_clear(void);
-void term__show_cursor(void);
-void term__hide_cursor(void);
-void term__clear_previous_line(void);
-bool term__can_show_color_on_stdout(void);
-bool term__can_show_color_on_stderr(void);
-string term__failed(string s);
-string term__ok_message(string s);
-string term__fail_message(string s);
-string term__warn_message(string s);
-string term__colorize(string (*cfn)(string ), string s);
-string term__ecolorize(string (*cfn)(string ), string s);
-string term__strip_ansi(string text);
-string term__h_divider(string divider);
-string term__header_left(string text, string divider);
-string term__header(string text, string divider);
-VV_LOCAL_SYMBOL int term__imax(int x, int y);
-VV_LOCAL_SYMBOL bool term__supports_escape_sequences(int fd);
-multi_return_int_int term__get_terminal_size(void);
-_result_term__Coord term__get_cursor_position(void);
-bool term__set_terminal_title(string title);
-bool term__set_tab_title(string title);
-bool term__clear(void);
-_option_rune term__utf8_getchar(void);
-int term__utf8_len(u8 c);
 void rand__wyrand__WyRandRNG_seed(rand__wyrand__WyRandRNG* rng, Array_u32 seed_data);
 u8 rand__wyrand__WyRandRNG_u8(rand__wyrand__WyRandRNG* rng);
 u16 rand__wyrand__WyRandRNG_u16(rand__wyrand__WyRandRNG* rng);
@@ -3896,45 +3710,6 @@ u32 rand__wyrand__WyRandRNG_u32(rand__wyrand__WyRandRNG* rng);
 u64 rand__wyrand__WyRandRNG_u64(rand__wyrand__WyRandRNG* rng);
 int rand__wyrand__WyRandRNG_block_size(rand__wyrand__WyRandRNG* rng);
 void rand__wyrand__WyRandRNG_free(rand__wyrand__WyRandRNG* rng);
-void readline__Readline_enable_raw_mode(readline__Readline* r);
-void readline__Readline_enable_raw_mode_nosig(readline__Readline* r);
-void readline__Readline_disable_raw_mode(readline__Readline* r);
-_result_int readline__Readline_read_char(readline__Readline* r);
-_result_Array_rune readline__Readline_read_line_utf8(readline__Readline* r, string prompt);
-_result_string readline__Readline_read_line(readline__Readline* r, string prompt);
-_result_Array_rune readline__read_line_utf8(string prompt);
-_result_string readline__read_line(string prompt);
-VV_LOCAL_SYMBOL readline__Action readline__Readline_analyse(readline__Readline* r, int c);
-VV_LOCAL_SYMBOL readline__Action readline__Readline_analyse_control(readline__Readline* r);
-VV_LOCAL_SYMBOL readline__Action readline__Readline_analyse_extended_control(readline__Readline* r);
-VV_LOCAL_SYMBOL readline__Action readline__Readline_analyse_extended_control_no_eat(readline__Readline* r, u8 last_c);
-VV_LOCAL_SYMBOL bool readline__Readline_execute(readline__Readline* r, readline__Action a, int c);
-VV_LOCAL_SYMBOL int readline__get_screen_columns(void);
-VV_LOCAL_SYMBOL void readline__shift_cursor(int xpos, int yoffset);
-VV_LOCAL_SYMBOL Array_int readline__calculate_screen_position(int x_in, int y_in, int screen_columns, int char_count, Array_int inp);
-VV_LOCAL_SYMBOL int readline__get_prompt_offset(string prompt);
-VV_LOCAL_SYMBOL void readline__Readline_refresh_line(readline__Readline* r);
-VV_LOCAL_SYMBOL bool readline__Readline_eof(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_insert_character(readline__Readline* r, int c);
-VV_LOCAL_SYMBOL void readline__Readline_delete_character(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_delete_word_left(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_delete_line(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_suppr_character(readline__Readline* r);
-VV_LOCAL_SYMBOL bool readline__Readline_commit_line(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_left(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_right(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_start(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_end(readline__Readline* r);
-VV_LOCAL_SYMBOL bool readline__Readline_is_break_character(readline__Readline* r, string c);
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_word_left(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_word_right(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_switch_overwrite(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_clear_screen(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_history_previous(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_history_next(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_completion(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_completion_clear(readline__Readline* r);
-VV_LOCAL_SYMBOL void readline__Readline_suspend(readline__Readline* r);
 VV_LOCAL_SYMBOL f64 rand__msqrt(f64 a);
 VV_LOCAL_SYMBOL f64 rand__mlog(f64 a);
 VV_LOCAL_SYMBOL multi_return_f64_int rand__frexp(f64 x);
@@ -4197,6 +3972,9 @@ string _const_si_s_code; // a string literal, inited later
 string _const_si_g32_code; // a string literal, inited later
 string _const_si_g64_code; // a string literal, inited later
 #define _const_cp_utf8 65001
+string _const_log__false_log; // a string literal, inited later
+string _const_log__true_log; // a string literal, inited later
+string _const_log__warn_log; // a string literal, inited later
 #define _const_term__termios__cclen 32
 string _const_time__days_string; // a string literal, inited later
 string _const_time__months_string; // a string literal, inited later
@@ -4259,8 +4037,6 @@ string _const_os__path_devnull; // a string literal, inited later
 #define _const_os__s_iroth 4
 #define _const_os__s_iwoth 2
 #define _const_os__s_ixoth 1
-#define _const_term__default_columns_size 80
-#define _const_term__default_rows_size 25
 #define _const_rand__wyrand__seed_len 2
 string _const_rand__ulid_encoding; // a string literal, inited later
 string _const_rand__english_letters; // a string literal, inited later
@@ -5208,14 +4984,14 @@ static int v_typeof_interface_idx_IError(int sidx) { /* IError */
 	if (sidx == _IError_voidptr_index) return 2;
 	if (sidx == _IError_Error_index) return 82;
 	if (sidx == _IError_MessageError_index) return 84;
-	if (sidx == _IError_time__TimeParseError_index) return 229;
-	if (sidx == _IError_io__Eof_index) return 238;
-	if (sidx == _IError_io__NotExpected_index) return 239;
-	if (sidx == _IError_os__Eof_index) return 129;
-	if (sidx == _IError_os__NotExpected_index) return 130;
-	if (sidx == _IError_os__FileNotOpenedError_index) return 132;
-	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 133;
-	if (sidx == _IError_os__ExecutableNotFoundError_index) return 151;
+	if (sidx == _IError_time__TimeParseError_index) return 220;
+	if (sidx == _IError_io__Eof_index) return 229;
+	if (sidx == _IError_io__NotExpected_index) return 230;
+	if (sidx == _IError_os__Eof_index) return 123;
+	if (sidx == _IError_os__NotExpected_index) return 124;
+	if (sidx == _IError_os__FileNotOpenedError_index) return 126;
+	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 127;
+	if (sidx == _IError_os__ExecutableNotFoundError_index) return 145;
 	return 30;
 }
 static char * v_typeof_interface_io__Reader(int sidx) { /* io.Reader */ 
@@ -5230,10 +5006,10 @@ static char * v_typeof_interface_io__Reader(int sidx) { /* io.Reader */
 static int v_typeof_interface_idx_io__Reader(int sidx) { /* io.Reader */ 
 	if (sidx == _io__Reader_net__TcpConn_index) return 102;
 	if (sidx == _io__Reader_voidptr_index) return 2;
-	if (sidx == _io__Reader_os__File_index) return 131;
-	if (sidx == _io__Reader_io__BufferedReader_index) return 235;
-	if (sidx == _io__Reader_io__ReaderWriterImpl_index) return 246;
-	return 234;
+	if (sidx == _io__Reader_os__File_index) return 125;
+	if (sidx == _io__Reader_io__BufferedReader_index) return 226;
+	if (sidx == _io__Reader_io__ReaderWriterImpl_index) return 237;
+	return 225;
 }
 static char * v_typeof_interface_io__Writer(int sidx) { /* io.Writer */ 
 	if (sidx == _io__Writer_io__MultiWriter_index) return "io.MultiWriter";
@@ -5246,13 +5022,13 @@ static char * v_typeof_interface_io__Writer(int sidx) { /* io.Writer */
 }
 
 static int v_typeof_interface_idx_io__Writer(int sidx) { /* io.Writer */ 
-	if (sidx == _io__Writer_io__MultiWriter_index) return 242;
+	if (sidx == _io__Writer_io__MultiWriter_index) return 233;
 	if (sidx == _io__Writer_voidptr_index) return 2;
 	if (sidx == _io__Writer_net__TcpConn_index) return 102;
-	if (sidx == _io__Writer_os__File_index) return 131;
-	if (sidx == _io__Writer_net__UdpConn_index) return 202;
-	if (sidx == _io__Writer_io__ReaderWriterImpl_index) return 246;
-	return 240;
+	if (sidx == _io__Writer_os__File_index) return 125;
+	if (sidx == _io__Writer_net__UdpConn_index) return 197;
+	if (sidx == _io__Writer_io__ReaderWriterImpl_index) return 237;
+	return 231;
 }
 static char * v_typeof_interface_io__RandomReader(int sidx) { /* io.RandomReader */ 
 	if (sidx == _io__RandomReader_os__File_index) return "os.File";
@@ -5261,9 +5037,9 @@ static char * v_typeof_interface_io__RandomReader(int sidx) { /* io.RandomReader
 }
 
 static int v_typeof_interface_idx_io__RandomReader(int sidx) { /* io.RandomReader */ 
-	if (sidx == _io__RandomReader_os__File_index) return 131;
+	if (sidx == _io__RandomReader_os__File_index) return 125;
 	if (sidx == _io__RandomReader_voidptr_index) return 2;
-	return 244;
+	return 235;
 }
 static char * v_typeof_interface_io__ReaderWriter(int sidx) { /* io.ReaderWriter */ 
 	if (sidx == _io__ReaderWriter_io__ReaderWriterImpl_index) return "io.ReaderWriterImpl";
@@ -5272,16 +5048,16 @@ static char * v_typeof_interface_io__ReaderWriter(int sidx) { /* io.ReaderWriter
 }
 
 static int v_typeof_interface_idx_io__ReaderWriter(int sidx) { /* io.ReaderWriter */ 
-	if (sidx == _io__ReaderWriter_io__ReaderWriterImpl_index) return 246;
+	if (sidx == _io__ReaderWriter_io__ReaderWriterImpl_index) return 237;
 	if (sidx == _io__ReaderWriter_voidptr_index) return 2;
-	return 245;
+	return 236;
 }
 static char * v_typeof_interface_io__RandomWriter(int sidx) { /* io.RandomWriter */ 
 	return "unknown io.RandomWriter";
 }
 
 static int v_typeof_interface_idx_io__RandomWriter(int sidx) { /* io.RandomWriter */ 
-	return 247;
+	return 238;
 }
 static char * v_typeof_interface_rand__PRNG(int sidx) { /* rand.PRNG */ 
 	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return "rand.wyrand.WyRandRNG";
@@ -5290,30 +5066,30 @@ static char * v_typeof_interface_rand__PRNG(int sidx) { /* rand.PRNG */
 }
 
 static int v_typeof_interface_idx_rand__PRNG(int sidx) { /* rand.PRNG */ 
-	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 254;
+	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 245;
 	if (sidx == _rand__PRNG_voidptr_index) return 2;
-	return 248;
+	return 239;
 }
 static char * v_typeof_interface_hash__Hasher(int sidx) { /* hash.Hasher */ 
 	return "unknown hash.Hasher";
 }
 
 static int v_typeof_interface_idx_hash__Hasher(int sidx) { /* hash.Hasher */ 
-	return 256;
+	return 247;
 }
 static char * v_typeof_interface_hash__Hash32er(int sidx) { /* hash.Hash32er */ 
 	return "unknown hash.Hash32er";
 }
 
 static int v_typeof_interface_idx_hash__Hash32er(int sidx) { /* hash.Hash32er */ 
-	return 257;
+	return 248;
 }
 static char * v_typeof_interface_hash__Hash64er(int sidx) { /* hash.Hash64er */ 
 	return "unknown hash.Hash64er";
 }
 
 static int v_typeof_interface_idx_hash__Hash64er(int sidx) { /* hash.Hash64er */ 
-	return 258;
+	return 249;
 }
 // << typeof() support for sum types
 
@@ -16218,58 +15994,6 @@ bool cmd__set_options(Array_string args, cmd__CmdOption long_option) {
 
 #if !defined(_WIN32) && !defined(__ANDROID__)
 #endif
-// TypeDecl
-// TypeDecl
-// TypeDecl
-// Attr: [inline]
-inline term__termios__TcFlag term__termios__flag(int value) {
-	term__termios__TcFlag _t1 = ((value));
-	return _t1;
-}
-
-// Attr: [inline]
-inline term__termios__TcFlag term__termios__invert(term__termios__TcFlag value) {
-	term__termios__TcFlag _t1 = ~((int)(value));
-	return _t1;
-}
-
-// Attr: [inline]
-inline int term__termios__tcgetattr(int fd, term__termios__Termios* termios_p) {
-	{ // Unsafe block
-		int _t1 = tcgetattr(fd, ((struct termios*)(termios_p)));
-		return _t1;
-	}
-	return 0;
-}
-
-// Attr: [inline]
-inline int term__termios__tcsetattr(int fd, int optional_actions, term__termios__Termios* termios_p) {
-	{ // Unsafe block
-		int _t1 = tcsetattr(fd, optional_actions, ((struct termios*)(termios_p)));
-		return _t1;
-	}
-	return 0;
-}
-
-// Attr: [inline]
-inline int term__termios__ioctl(int fd, u64 request, voidptr arg) {
-	{ // Unsafe block
-		int _t1 = ioctl(fd, request, arg);
-		return _t1;
-	}
-	return 0;
-}
-
-int term__termios__set_state(int fd, term__termios__Termios new_state) {
-	term__termios__Termios x = new_state;
-	int _t1 = term__termios__tcsetattr(0, TCSANOW, (voidptr)&/*qq*/x);
-	return _t1;
-}
-
-void term__termios__Termios_disable_echo(term__termios__Termios* t) {
-	t->c_lflag &= term__termios__invert(ECHO);
-}
-
 strings__textscanner__TextScanner strings__textscanner__new(string input) {
 	strings__textscanner__TextScanner _t1 = ((strings__textscanner__TextScanner){.input = input,.ilen = input.len,.pos = 0,});
 	return _t1;
@@ -16389,6 +16113,58 @@ void strings__textscanner__TextScanner_reset(strings__textscanner__TextScanner* 
 
 void strings__textscanner__TextScanner_goto_end(strings__textscanner__TextScanner* ss) {
 	ss->pos = ss->ilen;
+}
+
+// TypeDecl
+// TypeDecl
+// TypeDecl
+// Attr: [inline]
+inline term__termios__TcFlag term__termios__flag(int value) {
+	term__termios__TcFlag _t1 = ((value));
+	return _t1;
+}
+
+// Attr: [inline]
+inline term__termios__TcFlag term__termios__invert(term__termios__TcFlag value) {
+	term__termios__TcFlag _t1 = ~((int)(value));
+	return _t1;
+}
+
+// Attr: [inline]
+inline int term__termios__tcgetattr(int fd, term__termios__Termios* termios_p) {
+	{ // Unsafe block
+		int _t1 = tcgetattr(fd, ((struct termios*)(termios_p)));
+		return _t1;
+	}
+	return 0;
+}
+
+// Attr: [inline]
+inline int term__termios__tcsetattr(int fd, int optional_actions, term__termios__Termios* termios_p) {
+	{ // Unsafe block
+		int _t1 = tcsetattr(fd, optional_actions, ((struct termios*)(termios_p)));
+		return _t1;
+	}
+	return 0;
+}
+
+// Attr: [inline]
+inline int term__termios__ioctl(int fd, u64 request, voidptr arg) {
+	{ // Unsafe block
+		int _t1 = ioctl(fd, request, arg);
+		return _t1;
+	}
+	return 0;
+}
+
+int term__termios__set_state(int fd, term__termios__Termios new_state) {
+	term__termios__Termios x = new_state;
+	int _t1 = term__termios__tcsetattr(0, TCSANOW, (voidptr)&/*qq*/x);
+	return _t1;
+}
+
+void term__termios__Termios_disable_echo(term__termios__Termios* t) {
+	t->c_lflag &= term__termios__invert(ECHO);
 }
 
 // Attr: [deprecated]
@@ -23646,732 +23422,6 @@ u64 rand__seed__time_seed_64(void) {
 	return res;
 }
 
-string term__format_esc(string code) {
-	string _t1 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\033["), 0xfe10, {.d_s = code}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
-	return _t1;
-}
-
-string term__format(string msg, string open, string close) {
-	string _t1 =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\033["), 0xfe10, {.d_s = open}}, {_SLIT("m"), 0xfe10, {.d_s = msg}}, {_SLIT("\033["), 0xfe10, {.d_s = close}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
-	return _t1;
-}
-
-string term__format_rgb(int r, int g, int b, string msg, string open, string close) {
-	string _t1 =  str_intp(7, _MOV((StrIntpData[]){{_SLIT("\033["), 0xfe10, {.d_s = open}}, {_SLIT(";2;"), 0xfe07, {.d_i32 = r}}, {_SLIT(";"), 0xfe07, {.d_i32 = g}}, {_SLIT(";"), 0xfe07, {.d_i32 = b}}, {_SLIT("m"), 0xfe10, {.d_s = msg}}, {_SLIT("\033["), 0xfe10, {.d_s = close}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
-	return _t1;
-}
-
-string term__rgb(int r, int g, int b, string msg) {
-	string _t1 = term__format_rgb(r, g, b, msg, _SLIT("38"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bg_rgb(int r, int g, int b, string msg) {
-	string _t1 = term__format_rgb(r, g, b, msg, _SLIT("48"), _SLIT("49"));
-	return _t1;
-}
-
-string term__hex(int hex, string msg) {
-	string _t1 = term__format_rgb((hex >> 16), (((hex >> 8)) & 0xFF), (hex & 0xFF), msg, _SLIT("38"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bg_hex(int hex, string msg) {
-	string _t1 = term__format_rgb((hex >> 16), (((hex >> 8)) & 0xFF), (hex & 0xFF), msg, _SLIT("48"), _SLIT("49"));
-	return _t1;
-}
-
-string term__reset(string msg) {
-	string _t1 = term__format(msg, _SLIT("0"), _SLIT("0"));
-	return _t1;
-}
-
-string term__bold(string msg) {
-	string _t1 = term__format(msg, _SLIT("1"), _SLIT("22"));
-	return _t1;
-}
-
-string term__dim(string msg) {
-	string _t1 = term__format(msg, _SLIT("2"), _SLIT("22"));
-	return _t1;
-}
-
-string term__italic(string msg) {
-	string _t1 = term__format(msg, _SLIT("3"), _SLIT("23"));
-	return _t1;
-}
-
-string term__underline(string msg) {
-	string _t1 = term__format(msg, _SLIT("4"), _SLIT("24"));
-	return _t1;
-}
-
-string term__slow_blink(string msg) {
-	string _t1 = term__format(msg, _SLIT("5"), _SLIT("25"));
-	return _t1;
-}
-
-string term__rapid_blink(string msg) {
-	string _t1 = term__format(msg, _SLIT("6"), _SLIT("26"));
-	return _t1;
-}
-
-string term__inverse(string msg) {
-	string _t1 = term__format(msg, _SLIT("7"), _SLIT("27"));
-	return _t1;
-}
-
-string term__hidden(string msg) {
-	string _t1 = term__format(msg, _SLIT("8"), _SLIT("28"));
-	return _t1;
-}
-
-string term__strikethrough(string msg) {
-	string _t1 = term__format(msg, _SLIT("9"), _SLIT("29"));
-	return _t1;
-}
-
-string term__black(string msg) {
-	string _t1 = term__format(msg, _SLIT("30"), _SLIT("39"));
-	return _t1;
-}
-
-string term__red(string msg) {
-	string _t1 = term__format(msg, _SLIT("31"), _SLIT("39"));
-	return _t1;
-}
-
-string term__green(string msg) {
-	string _t1 = term__format(msg, _SLIT("32"), _SLIT("39"));
-	return _t1;
-}
-
-string term__yellow(string msg) {
-	string _t1 = term__format(msg, _SLIT("33"), _SLIT("39"));
-	return _t1;
-}
-
-string term__blue(string msg) {
-	string _t1 = term__format(msg, _SLIT("34"), _SLIT("39"));
-	return _t1;
-}
-
-string term__magenta(string msg) {
-	string _t1 = term__format(msg, _SLIT("35"), _SLIT("39"));
-	return _t1;
-}
-
-string term__cyan(string msg) {
-	string _t1 = term__format(msg, _SLIT("36"), _SLIT("39"));
-	return _t1;
-}
-
-string term__white(string msg) {
-	string _t1 = term__format(msg, _SLIT("37"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bg_black(string msg) {
-	string _t1 = term__format(msg, _SLIT("40"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_red(string msg) {
-	string _t1 = term__format(msg, _SLIT("41"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_green(string msg) {
-	string _t1 = term__format(msg, _SLIT("42"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_yellow(string msg) {
-	string _t1 = term__format(msg, _SLIT("43"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_blue(string msg) {
-	string _t1 = term__format(msg, _SLIT("44"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_magenta(string msg) {
-	string _t1 = term__format(msg, _SLIT("45"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_cyan(string msg) {
-	string _t1 = term__format(msg, _SLIT("46"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_white(string msg) {
-	string _t1 = term__format(msg, _SLIT("47"), _SLIT("49"));
-	return _t1;
-}
-
-string term__gray(string msg) {
-	string _t1 = term__bright_black(msg);
-	return _t1;
-}
-
-string term__bright_black(string msg) {
-	string _t1 = term__format(msg, _SLIT("90"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_red(string msg) {
-	string _t1 = term__format(msg, _SLIT("91"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_green(string msg) {
-	string _t1 = term__format(msg, _SLIT("92"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_yellow(string msg) {
-	string _t1 = term__format(msg, _SLIT("93"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_blue(string msg) {
-	string _t1 = term__format(msg, _SLIT("94"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_magenta(string msg) {
-	string _t1 = term__format(msg, _SLIT("95"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_cyan(string msg) {
-	string _t1 = term__format(msg, _SLIT("96"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_white(string msg) {
-	string _t1 = term__format(msg, _SLIT("97"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_bg_black(string msg) {
-	string _t1 = term__format(msg, _SLIT("100"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_red(string msg) {
-	string _t1 = term__format(msg, _SLIT("101"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_green(string msg) {
-	string _t1 = term__format(msg, _SLIT("102"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_yellow(string msg) {
-	string _t1 = term__format(msg, _SLIT("103"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_blue(string msg) {
-	string _t1 = term__format(msg, _SLIT("104"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_magenta(string msg) {
-	string _t1 = term__format(msg, _SLIT("105"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_cyan(string msg) {
-	string _t1 = term__format(msg, _SLIT("106"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_white(string msg) {
-	string _t1 = term__format(msg, _SLIT("107"), _SLIT("49"));
-	return _t1;
-}
-
-string term__highlight_command(string command) {
-	string _t1 = term__bright_white(term__bg_cyan( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = command}}, {_SLIT(" "), 0, { .d_c = 0 }}}))));
-	return _t1;
-}
-
-void term__set_cursor_position(term__Coord c) {
-	print(string__plus( str_intp(3, _MOV((StrIntpData[]){{_SLIT("\033["), 0xfe07, {.d_i32 = c.y}}, {_SLIT(";"), 0xfe07, {.d_i32 = c.x}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT("H")));
-	flush_stdout();
-}
-
-void term__move(int n, string direction) {
-	print( str_intp(3, _MOV((StrIntpData[]){{_SLIT("\033["), 0xfe07, {.d_i32 = n}}, {_SLIT0, 0xfe10, {.d_s = direction}}, {_SLIT0, 0, { .d_c = 0 }}})));
-	flush_stdout();
-}
-
-void term__cursor_up(int n) {
-	term__move(n, _SLIT("A"));
-}
-
-void term__cursor_down(int n) {
-	term__move(n, _SLIT("B"));
-}
-
-void term__cursor_forward(int n) {
-	term__move(n, _SLIT("C"));
-}
-
-void term__cursor_back(int n) {
-	term__move(n, _SLIT("D"));
-}
-
-void term__erase_display(string t) {
-	print(string__plus(string__plus(_SLIT("\033["), t), _SLIT("J")));
-	flush_stdout();
-}
-
-void term__erase_toend(void) {
-	term__erase_display(_SLIT("0"));
-}
-
-void term__erase_tobeg(void) {
-	term__erase_display(_SLIT("1"));
-}
-
-void term__erase_clear(void) {
-	print(_SLIT("\033[H\033[J"));
-	flush_stdout();
-}
-
-void term__erase_del_clear(void) {
-	term__erase_display(_SLIT("3"));
-}
-
-void term__erase_line(string t) {
-	print(string__plus(string__plus(_SLIT("\033["), t), _SLIT("K")));
-	flush_stdout();
-}
-
-void term__erase_line_toend(void) {
-	term__erase_line(_SLIT("0"));
-}
-
-void term__erase_line_tobeg(void) {
-	term__erase_line(_SLIT("1"));
-}
-
-void term__erase_line_clear(void) {
-	term__erase_line(_SLIT("2"));
-}
-
-void term__show_cursor(void) {
-	print(_SLIT("\033[?25h"));
-	flush_stdout();
-}
-
-void term__hide_cursor(void) {
-	print(_SLIT("\033[?25l"));
-	flush_stdout();
-}
-
-void term__clear_previous_line(void) {
-	print(_SLIT("\r\033[1A\033[2K"));
-	flush_stdout();
-}
-
-bool term__can_show_color_on_stdout(void) {
-	bool _t1 = term__supports_escape_sequences(1);
-	return _t1;
-}
-
-bool term__can_show_color_on_stderr(void) {
-	bool _t1 = term__supports_escape_sequences(2);
-	return _t1;
-}
-
-string term__failed(string s) {
-	if (term__can_show_color_on_stdout()) {
-		string _t1 = term__bg_red(term__bold(term__white(s)));
-		return _t1;
-	}
-	return s;
-}
-
-string term__ok_message(string s) {
-	if (term__can_show_color_on_stdout()) {
-		string _t1 = term__green( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = s}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
-		return _t1;
-	}
-	return s;
-}
-
-string term__fail_message(string s) {
-	string _t1 = term__failed( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = s}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
-	return _t1;
-}
-
-string term__warn_message(string s) {
-	if (term__can_show_color_on_stdout()) {
-		string _t1 = term__bright_yellow( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = s}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
-		return _t1;
-	}
-	return s;
-}
-
-string term__colorize(string (*cfn)(string ), string s) {
-	if (term__can_show_color_on_stdout()) {
-		string _t1 = cfn(s);
-		return _t1;
-	}
-	return s;
-}
-
-string term__ecolorize(string (*cfn)(string ), string s) {
-	if (term__can_show_color_on_stderr()) {
-		string _t1 = cfn(s);
-		return _t1;
-	}
-	return s;
-}
-
-string term__strip_ansi(string text) {
-	strings__textscanner__TextScanner input = strings__textscanner__new(text);
-	Array_u8 output = __new_array_with_default_noscan(0, text.len, sizeof(u8), 0);
-	int ch = 0;
-	for (;;) {
-		if (!(ch != -1)) break;
-		ch = strings__textscanner__TextScanner_next(&input);
-		if (ch == 27) {
-			ch = strings__textscanner__TextScanner_next(&input);
-			if (ch == '[') {
-				for (;;) {
-					ch = strings__textscanner__TextScanner_next(&input);
-					if ((ch == ';' || ch == '?') || (ch >= '0' && ch <= '9')) {
-						continue;
-					}
-					break;
-				}
-			} else if (ch == ']') {
-				ch = strings__textscanner__TextScanner_next(&input);
-				if (ch >= '0' && ch <= '9') {
-					for (;;) {
-						ch = strings__textscanner__TextScanner_next(&input);
-						if (ch == -1 || ch == 7) {
-							break;
-						}
-						if (ch == 27) {
-							ch = strings__textscanner__TextScanner_next(&input);
-							break;
-						}
-					}
-				}
-			} else if (ch == '%') {
-				ch = strings__textscanner__TextScanner_next(&input);
-			}
-		} else if (ch != -1) {
-			array_push_noscan((array*)&output, _MOV((u8[]){ ((u8)(ch)) }));
-		}
-	}
-	string _t2 = Array_u8_bytestr(output);
-	return _t2;
-}
-
-string term__h_divider(string divider) {
-	multi_return_int_int mr_3271 = term__get_terminal_size();
-	int cols = mr_3271.arg0;
-	string result = _SLIT("");
-	if (divider.len > 0) {
-		result = string_repeat(divider, (int)(1 + ((int)(cols / divider.len))));
-	} else {
-		result = string_repeat(_SLIT(" "), (int)(1 + cols));
-	}
-	string _t1 = string_substr(result, 0, cols);
-	return _t1;
-}
-
-string term__header_left(string text, string divider) {
-	string plain_text = term__strip_ansi(text);
-	multi_return_int_int mr_3716 = term__get_terminal_size();
-	int xcols = mr_3716.arg0;
-	int cols = term__imax(1, xcols);
-	string relement = (divider.len > 0 ? (divider) : (_SLIT(" ")));
-	string hstart = string_substr(string_repeat(relement, 4), 0, 4);
-	int remaining_cols = term__imax(0, ((int)(cols - ((int)((int)((int)(hstart.len + 1) + plain_text.len) + 1)))));
-	string hend = string_substr(string_repeat(relement, (int)(((int)(remaining_cols + 1)) / relement.len)), 0, remaining_cols);
-	string _t1 =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = hstart}}, {_SLIT(" "), 0xfe10, {.d_s = text}}, {_SLIT(" "), 0xfe10, {.d_s = hend}}, {_SLIT0, 0, { .d_c = 0 }}}));
-	return _t1;
-}
-
-string term__header(string text, string divider) {
-	if (text.len == 0) {
-		string _t1 = term__h_divider(divider);
-		return _t1;
-	}
-	multi_return_int_int mr_4342 = term__get_terminal_size();
-	int xcols = mr_4342.arg0;
-	int cols = term__imax(1, xcols);
-	int tlimit = term__imax(1, (cols > (int)((int)(text.len + 2) + (int)(2 * divider.len)) ? (text.len) : ((int)((int)(cols - 3) - (int)(2 * divider.len)))));
-	int tlimit_aligned = (((int)(tlimit % 2)) != ((int)(cols % 2)) ? ((int)(tlimit + 1)) : (tlimit));
-	int tstart = term__imax(0, (int)(((int)(cols - tlimit_aligned)) / 2));
-	string ln = _SLIT("");
-	if (divider.len > 0) {
-		ln = string_substr(string_repeat(divider, (int)(1 + (int)(cols / divider.len))), 0, cols);
-	} else {
-		ln = string_repeat(_SLIT(" "), (int)(1 + cols));
-	}
-	if (ln.len == 1) {
-		string _t2 = string__plus(string__plus(string__plus(string__plus(ln, _SLIT(" ")), string_substr(text, 0, tlimit)), _SLIT(" ")), ln);
-		return _t2;
-	}
-	string _t3 = string__plus(string__plus(string__plus(string__plus(string_substr(ln, 0, tstart), _SLIT(" ")), string_substr(text, 0, tlimit)), _SLIT(" ")), string_substr(ln, (int)((int)(tstart + tlimit) + 2), cols));
-	return _t3;
-}
-
-VV_LOCAL_SYMBOL int term__imax(int x, int y) {
-	int _t1 = (x > y ? (x) : (y));
-	return _t1;
-}
-
-// Attr: [manualfree]
-VV_LOCAL_SYMBOL bool term__supports_escape_sequences(int fd) {
-	bool term__supports_escape_sequences_defer_0 = false;
-	string vcolors_override;
-	bool term__supports_escape_sequences_defer_1 = false;
-	string env_term;
-	vcolors_override = os__getenv(_SLIT("VCOLORS"));
-	term__supports_escape_sequences_defer_0 = true;
-	if (string__eq(vcolors_override, _SLIT("always"))) {
-		bool _t1 = true;
-			// Defer begin
-			if (term__supports_escape_sequences_defer_0) {
-				string_free(&vcolors_override);
-			}
-			// Defer end
-		return _t1;
-	}
-	if (string__eq(vcolors_override, _SLIT("never"))) {
-		bool _t2 = false;
-			// Defer begin
-			if (term__supports_escape_sequences_defer_0) {
-				string_free(&vcolors_override);
-			}
-			// Defer end
-		return _t2;
-	}
-	env_term = os__getenv(_SLIT("TERM"));
-	term__supports_escape_sequences_defer_1 = true;
-	if (string__eq(env_term, _SLIT("dumb"))) {
-		bool _t3 = false;
-			// Defer begin
-			if (term__supports_escape_sequences_defer_1) {
-				string_free(&env_term);
-			}
-			// Defer end
-			// Defer begin
-			if (term__supports_escape_sequences_defer_0) {
-				string_free(&vcolors_override);
-			}
-			// Defer end
-		return _t3;
-	}
-	#if defined(_WIN32)
-	{
-	}
-	#else
-	{
-		bool _t5 = os__is_atty(fd) > 0;
-			// Defer begin
-			if (term__supports_escape_sequences_defer_1) {
-				string_free(&env_term);
-			}
-			// Defer end
-			// Defer begin
-			if (term__supports_escape_sequences_defer_0) {
-				string_free(&vcolors_override);
-			}
-			// Defer end
-		return _t5;
-	}
-	#endif
-	return 0;
-}
-
-multi_return_int_int term__get_terminal_size(void) {
-	if (os__is_atty(1) <= 0 || string__eq(os__getenv(_SLIT("TERM")), _SLIT("dumb"))) {
-		return (multi_return_int_int){.arg0=_const_term__default_columns_size, .arg1=_const_term__default_rows_size};
-	}
-	struct winsize w = ((struct winsize){.ws_row = 0,.ws_col = 0,.ws_xpixel = 0,.ws_ypixel = 0,});
-	ioctl(1, ((u64)(TIOCGWINSZ)), &w);
-	return (multi_return_int_int){.arg0=((int)(w.ws_col)), .arg1=((int)(w.ws_row))};
-}
-
-_result_term__Coord term__get_cursor_position(void) {
-	bool term__get_cursor_position_defer_0 = false;
-	term__termios__Termios old_state;
-	if (os__is_atty(1) <= 0 || string__eq(os__getenv(_SLIT("TERM")), _SLIT("dumb"))) {
-		_result_term__Coord _t1;
-		_result_ok(&(term__Coord[]) { ((term__Coord){.x = 0,.y = 0,}) }, (_result*)(&_t1), sizeof(term__Coord));
-		return _t1;
-	}
-	old_state = ((term__termios__Termios){.c_iflag = 0,.c_oflag = 0,.c_cflag = 0,.c_lflag = 0,.c_line = 0,.c_cc = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},.c_ispeed = 0,.c_ospeed = 0,});
-	if (term__termios__tcgetattr(0, (voidptr)&/*qq*/old_state) != 0) {
-		return (_result_term__Coord){ .is_error=true, .err=os__last_error(), .data={EMPTY_STRUCT_INITIALIZATION} };
-	}
-	term__get_cursor_position_defer_0 = true;
-	term__termios__Termios state = ((term__termios__Termios){.c_iflag = 0,.c_oflag = 0,.c_cflag = 0,.c_lflag = 0,.c_line = 0,.c_cc = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},.c_ispeed = 0,.c_ospeed = 0,});
-	if (term__termios__tcgetattr(0, (voidptr)&/*qq*/state) != 0) {
-		_result_term__Coord _t3 = (_result_term__Coord){ .is_error=true, .err=os__last_error(), .data={EMPTY_STRUCT_INITIALIZATION} };
-			// Defer begin
-			if (term__get_cursor_position_defer_0) {
-				term__termios__tcsetattr(0, TCSANOW, (voidptr)&/*qq*/old_state);
-			}
-			// Defer end
-		return _t3;
-	}
-	state.c_lflag &= term__termios__invert((((u32)(ICANON)) | ((u32)(ECHO))));
-	term__termios__tcsetattr(0, TCSANOW, (voidptr)&/*qq*/state);
-	print(_SLIT("\e[6n"));
-	flush_stdout();
-	int x = 0;
-	int y = 0;
-	u8 stage = ((u8)(0));
-	for (;;) {
-		int w = getchar();
-		if (w < 0) {
-			_result_term__Coord _t4 = (_result_term__Coord){ .is_error=true, .err=error_with_code(_SLIT("Failed to read from stdin"), 888), .data={EMPTY_STRUCT_INITIALIZATION} };
-				// Defer begin
-				if (term__get_cursor_position_defer_0) {
-					term__termios__tcsetattr(0, TCSANOW, (voidptr)&/*qq*/old_state);
-				}
-				// Defer end
-			return _t4;
-		} else if (w == '[' || w == ';') {
-			stage++;
-		} else if ('0' <= w && w <= '9') {
-
-			if (stage == (1)) {
-				y = (int)((int)(y * 10) + ((int)((rune)(w - '0'))));
-			}
-			else if (stage == (2)) {
-				x = (int)((int)(x * 10) + ((int)((rune)(w - '0'))));
-			}
-			else {
-			}
-		} else if (w == 'R') {
-			break;
-		}
-	}
-	_result_term__Coord _t5;
-	_result_ok(&(term__Coord[]) { ((term__Coord){.x = x,.y = y,}) }, (_result*)(&_t5), sizeof(term__Coord));
-		// Defer begin
-		if (term__get_cursor_position_defer_0) {
-			term__termios__tcsetattr(0, TCSANOW, (voidptr)&/*qq*/old_state);
-		}
-		// Defer end
-	return _t5;
-}
-
-bool term__set_terminal_title(string title) {
-	if (os__is_atty(1) <= 0 || string__eq(os__getenv(_SLIT("TERM")), _SLIT("dumb"))) {
-		bool _t1 = false;
-		return _t1;
-	}
-	print(_SLIT("\033]0;"));
-	print(title);
-	print(_SLIT("\007"));
-	flush_stdout();
-	bool _t2 = true;
-	return _t2;
-}
-
-bool term__set_tab_title(string title) {
-	if (os__is_atty(1) <= 0 || string__eq(os__getenv(_SLIT("TERM")), _SLIT("dumb"))) {
-		bool _t1 = false;
-		return _t1;
-	}
-	print(_SLIT("\033]30;"));
-	print(title);
-	print(_SLIT("\007"));
-	flush_stdout();
-	bool _t2 = true;
-	return _t2;
-}
-
-bool term__clear(void) {
-	if (os__is_atty(1) <= 0 || string__eq(os__getenv(_SLIT("TERM")), _SLIT("dumb"))) {
-		bool _t1 = false;
-		return _t1;
-	}
-	print(_SLIT("\033[2J"));
-	print(_SLIT("\033[H"));
-	flush_stdout();
-	bool _t2 = true;
-	return _t2;
-}
-
-_option_rune term__utf8_getchar(void) {
-	int c = input_character();
-	if (c == -1) {
-		return (_option_rune){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
-	}
-	int len = term__utf8_len(((u8)(~c)));
-	if (c < 0) {
-		_option_rune _t2;
-		_option_ok(&(rune[]) { 0 }, (_option*)(&_t2), sizeof(rune));
-		return _t2;
-	} else if (len == 0) {
-		_option_rune _t3;
-		_option_ok(&(rune[]) { c }, (_option*)(&_t3), sizeof(rune));
-		return _t3;
-	} else if (len == 1) {
-		_option_rune _t4;
-		_option_ok(&(rune[]) { -1 }, (_option*)(&_t4), sizeof(rune));
-		return _t4;
-	} else {
-		int uc = (c & ((int_literal)(((1 << ((int)(7 - len)))) - 1)));
-		for (int i = 0; (int)(i + 1) < len; i++) {
-			int c2 = input_character();
-			if (c2 != -1 && ((c2 >> 6)) == 2) {
-				uc <<= 6;
-				uc |= ((c2 & 63));
-			} else if (c2 == -1) {
-				_option_rune _t5;
-				_option_ok(&(rune[]) { 0 }, (_option*)(&_t5), sizeof(rune));
-				return _t5;
-			} else {
-				_option_rune _t6;
-				_option_ok(&(rune[]) { -1 }, (_option*)(&_t6), sizeof(rune));
-				return _t6;
-			}
-		}
-		_option_rune _t7;
-		_option_ok(&(rune[]) { uc }, (_option*)(&_t7), sizeof(rune));
-		return _t7;
-	}
-	return (_option_rune){0};
-}
-
-int term__utf8_len(u8 c) {
-	int b = 0;
-	u8 x = c;
-	if (((x & 240)) != 0) {
-		x >>= 4;
-	} else {
-		b += 4;
-	}
-	if (((x & 12)) != 0) {
-		x >>= 2;
-	} else {
-		b += 2;
-	}
-	if (((x & 2)) == 0) {
-		b++;
-	}
-	return b;
-}
-
 void rand__wyrand__WyRandRNG_seed(rand__wyrand__WyRandRNG* rng, Array_u32 seed_data) {
 	if (seed_data.len != 2) {
 		eprintln(_SLIT("WyRandRNG needs 2 32-bit unsigned integers as the seed."));
@@ -24450,799 +23500,6 @@ inline int rand__wyrand__WyRandRNG_block_size(rand__wyrand__WyRandRNG* rng) {
 // Attr: [unsafe]
 void rand__wyrand__WyRandRNG_free(rand__wyrand__WyRandRNG* rng) {
 	_v_free(rng);
-}
-
-void readline__Readline_enable_raw_mode(readline__Readline* r) {
-	if (term__termios__tcgetattr(0, (voidptr)&/*qq*/r->orig_termios) != 0) {
-		r->is_tty = false;
-		r->is_raw = false;
-		return;
-	}
-	term__termios__Termios raw = r->orig_termios;
-	raw.c_iflag &= term__termios__invert(((((BRKINT | ICRNL) | INPCK) | ISTRIP) | IXON));
-	raw.c_cflag |= term__termios__flag(CS8);
-	raw.c_lflag &= term__termios__invert((((ECHO | ICANON) | IEXTEN) | ISIG));
-	raw.c_cc[v_fixed_index(VMIN, 32)] = ((u8)(1));
-	raw.c_cc[v_fixed_index(VTIME, 32)] = ((u8)(0));
-	term__termios__tcsetattr(0, TCSADRAIN, (voidptr)&/*qq*/raw);
-	r->is_raw = true;
-	r->is_tty = true;
-}
-
-void readline__Readline_enable_raw_mode_nosig(readline__Readline* r) {
-	if (term__termios__tcgetattr(0, (voidptr)&/*qq*/r->orig_termios) != 0) {
-		r->is_tty = false;
-		r->is_raw = false;
-		return;
-	}
-	term__termios__Termios raw = r->orig_termios;
-	raw.c_iflag &= term__termios__invert(((((BRKINT | ICRNL) | INPCK) | ISTRIP) | IXON));
-	raw.c_cflag |= term__termios__flag(CS8);
-	raw.c_lflag &= term__termios__invert(((ECHO | ICANON) | IEXTEN));
-	raw.c_cc[v_fixed_index(VMIN, 32)] = ((u8)(1));
-	raw.c_cc[v_fixed_index(VTIME, 32)] = ((u8)(0));
-	term__termios__tcsetattr(0, TCSADRAIN, (voidptr)&/*qq*/raw);
-	r->is_raw = true;
-	r->is_tty = true;
-}
-
-void readline__Readline_disable_raw_mode(readline__Readline* r) {
-	if (r->is_raw) {
-		term__termios__tcsetattr(0, TCSADRAIN, (voidptr)&/*qq*/r->orig_termios);
-		r->is_raw = false;
-	}
-}
-
-_result_int readline__Readline_read_char(readline__Readline* r) {
-	_option_rune _t2 = term__utf8_getchar();
-	if (_t2.state != 0) {
-		IError err = _t2.err;
-		return (_result_int){ .is_error=true, .err=err, .data={EMPTY_STRUCT_INITIALIZATION} };
-	}
-	
- 	_result_int _t1;
-	_result_ok(&(int[]) { ((int)( (*(rune*)_t2.data))) }, (_result*)(&_t1), sizeof(int));
-	return _t1;
-}
-
-_result_Array_rune readline__Readline_read_line_utf8(readline__Readline* r, string prompt) {
-	r->current = __new_array_with_default_noscan(0, 0, sizeof(rune), 0);
-	r->cursor = 0;
-	r->prompt = prompt;
-	r->search_index = 0;
-	r->prompt_offset = readline__get_prompt_offset(prompt);
-	if (r->previous_lines.len <= 1) {
-		array_push((array*)&r->previous_lines, _MOV((Array_rune[]){ __new_array_with_default_noscan(0, 0, sizeof(rune), 0) }));
-		array_push((array*)&r->previous_lines, _MOV((Array_rune[]){ __new_array_with_default_noscan(0, 0, sizeof(rune), 0) }));
-	} else {
-		array_set(&r->previous_lines, 0, &(Array_rune[]) { __new_array_with_default_noscan(0, 0, sizeof(rune), 0) });
-	}
-	if (!r->is_raw) {
-		readline__Readline_enable_raw_mode(r);
-	}
-	print(r->prompt);
-	for (;;) {
-		flush_stdout();
-		_result_int _t3 = readline__Readline_read_char(r);
-		if (_t3.is_error) {
-			IError err = _t3.err;
-			return (_result_Array_rune){ .is_error=true, .err=err, .data={EMPTY_STRUCT_INITIALIZATION} };
-		}
-		
- 		int c =  (*(int*)_t3.data);
-		readline__Action a = readline__Readline_analyse(r, c);
-		if (readline__Readline_execute(r, a, c)) {
-			break;
-		}
-	}
-	array_set(&r->previous_lines, 0, &(Array_rune[]) { __new_array_with_default_noscan(0, 0, sizeof(rune), 0) });
-	r->search_index = 0;
-	readline__Readline_disable_raw_mode(r);
-	if (r->current.len == 0) {
-		return (_result_Array_rune){ .is_error=true, .err=_v_error(_SLIT("empty line")), .data={EMPTY_STRUCT_INITIALIZATION} };
-	} else {
-		if ((*(rune*)array_last(r->current)) == '\n') {
-			(*(rune*)array_pop_noscan(&r->current));
-		}
-	}
-	_result_Array_rune _t6;
-	_result_ok(&(Array_rune[]) { r->current }, (_result*)(&_t6), sizeof(Array_rune));
-	return _t6;
-}
-
-_result_string readline__Readline_read_line(readline__Readline* r, string prompt) {
-	_result_Array_rune _t1 = readline__Readline_read_line_utf8(r, prompt);
-	if (_t1.is_error) {
-		_result_string _t2;
-		memcpy(&_t2, &_t1, sizeof(_result));
-		return _t2;
-	}
-	
- 	Array_rune s =  (*(Array_rune*)_t1.data);
-	_result_string _t3;
-	_result_ok(&(string[]) { Array_rune_string(s) }, (_result*)(&_t3), sizeof(string));
-	return _t3;
-}
-
-_result_Array_rune readline__read_line_utf8(string prompt) {
-	readline__Readline r = ((readline__Readline){.is_raw = 0,.orig_termios = (term__termios__Termios){.c_iflag = 0,.c_oflag = 0,.c_cflag = 0,.c_lflag = 0,.c_line = 0,.c_ispeed = 0,.c_ospeed = 0,},.current = __new_array_noscan(0, 0, sizeof(rune)),.cursor = 0,.overwrite = 0,.cursor_row_offset = 0,.prompt = (string){.str=(byteptr)"", .is_lit=1},.prompt_offset = 0,.previous_lines = __new_array(0, 0, sizeof(Array_rune)),.skip_empty = 0,.search_index = 0,.is_tty = 0,.last_prefix_completion = __new_array_noscan(0, 0, sizeof(rune)),.last_completion_offset = 0,.completion_list = __new_array(0, 0, sizeof(string)),.completion_callback = ((void*)0),});
-	_result_Array_rune _t1 = readline__Readline_read_line_utf8(&r, prompt);
-	if (_t1.is_error) {
-		_result_Array_rune _t2;
-		memcpy(&_t2, &_t1, sizeof(_result));
-		return _t2;
-	}
-	
- 	Array_rune s =  (*(Array_rune*)_t1.data);
-	_result_Array_rune _t3;
-	_result_ok(&(Array_rune[]) { s }, (_result*)(&_t3), sizeof(Array_rune));
-	return _t3;
-}
-
-_result_string readline__read_line(string prompt) {
-	readline__Readline r = ((readline__Readline){.is_raw = 0,.orig_termios = (term__termios__Termios){.c_iflag = 0,.c_oflag = 0,.c_cflag = 0,.c_lflag = 0,.c_line = 0,.c_ispeed = 0,.c_ospeed = 0,},.current = __new_array_noscan(0, 0, sizeof(rune)),.cursor = 0,.overwrite = 0,.cursor_row_offset = 0,.prompt = (string){.str=(byteptr)"", .is_lit=1},.prompt_offset = 0,.previous_lines = __new_array(0, 0, sizeof(Array_rune)),.skip_empty = 0,.search_index = 0,.is_tty = 0,.last_prefix_completion = __new_array_noscan(0, 0, sizeof(rune)),.last_completion_offset = 0,.completion_list = __new_array(0, 0, sizeof(string)),.completion_callback = ((void*)0),});
-	_result_string _t1 = readline__Readline_read_line(&r, prompt);
-	if (_t1.is_error) {
-		_result_string _t2;
-		memcpy(&_t2, &_t1, sizeof(_result));
-		return _t2;
-	}
-	
- 	string s =  (*(string*)_t1.data);
-	_result_string _t3;
-	_result_ok(&(string[]) { s }, (_result*)(&_t3), sizeof(string));
-	return _t3;
-}
-
-VV_LOCAL_SYMBOL readline__Action readline__Readline_analyse(readline__Readline* r, int c) {
-	if (c > 255) {
-		readline__Action _t1 = readline__Action__insert_character;
-		return _t1;
-	}
-	u8 /*A*/ _t2 = ((u8)(c));
-		switch (_t2) {
-		case '\0': case 0x3: case 0x4: case 255: {
-				readline__Action _t3 = readline__Action__eof;
-				return _t3;
-		}
-		case '\n': case '\r': {
-				array_clear(&r->last_prefix_completion);
-				readline__Action _t4 = readline__Action__commit_line;
-				return _t4;
-		}
-		case '\t': {
-				readline__Action _t5 = readline__Action__completion;
-				return _t5;
-		}
-		case '\f': {
-				readline__Action _t6 = readline__Action__clear_screen;
-				return _t6;
-		}
-		case '\b': case 127: {
-				readline__Action _t7 = readline__Action__delete_left;
-				return _t7;
-		}
-		case 27: {
-				readline__Action _t8 = readline__Readline_analyse_control(r);
-				return _t8;
-		}
-		case 21: {
-				readline__Action _t9 = readline__Action__delete_line;
-				return _t9;
-		}
-		case 23: {
-				readline__Action _t10 = readline__Action__delete_word_left;
-				return _t10;
-		}
-		case 1: {
-				readline__Action _t11 = readline__Action__move_cursor_start;
-				return _t11;
-		}
-		case 5: {
-				readline__Action _t12 = readline__Action__move_cursor_end;
-				return _t12;
-		}
-		case 26: {
-				readline__Action _t13 = readline__Action__suspend;
-				return _t13;
-		}
-		default: {
-				if (c >= ' ') {
-					array_clear(&r->last_prefix_completion);
-					readline__Action _t14 = readline__Action__insert_character;
-					return _t14;
-				}
-				readline__Action _t15 = readline__Action__nothing;
-				return _t15;
-		}
-	}
-	
-	return 0;
-}
-
-VV_LOCAL_SYMBOL readline__Action readline__Readline_analyse_control(readline__Readline* r) {
-	_result_int _t1 = readline__Readline_read_char(r);
-	if (_t1.is_error) {
-		IError err = _t1.err;
-		_v_panic(_SLIT("Control sequence incomplete"));
-		VUNREACHABLE();
-	;
-	}
-	
- 	int c =  (*(int*)_t1.data);
-	u8 /*A*/ _t2 = ((u8)(c));
-		switch (_t2) {
-		case '[': {
-				_result_int _t3 = readline__Readline_read_char(r);
-				if (_t3.is_error) {
-					IError err = _t3.err;
-					_v_panic(_SLIT("Control sequence incomplete"));
-					VUNREACHABLE();
-				;
-				}
-				
- 				int sequence =  (*(int*)_t3.data);
-				u8 /*A*/ _t4 = ((u8)(sequence));
-								switch (_t4) {
-					case 'C': {
-							readline__Action _t5 = readline__Action__move_cursor_right;
-							return _t5;
-					}
-					case 'D': {
-							readline__Action _t6 = readline__Action__move_cursor_left;
-							return _t6;
-					}
-					case 'B': {
-							readline__Action _t7 = readline__Action__history_next;
-							return _t7;
-					}
-					case 'A': {
-							readline__Action _t8 = readline__Action__history_previous;
-							return _t8;
-					}
-					case 'H': {
-							readline__Action _t9 = readline__Action__move_cursor_start;
-							return _t9;
-					}
-					case 'F': {
-							readline__Action _t10 = readline__Action__move_cursor_end;
-							return _t10;
-					}
-					case '1': {
-							readline__Action _t11 = readline__Readline_analyse_extended_control(r);
-							return _t11;
-					}
-					case '2': case '3': {
-							readline__Action _t12 = readline__Readline_analyse_extended_control_no_eat(r, ((u8)(sequence)));
-							return _t12;
-					}
-					default: {
-							break;
-					}
-				}
-				
-				break;
-		}
-		default: {
-				break;
-		}
-	}
-	
-	readline__Action _t13 = readline__Action__nothing;
-	return _t13;
-}
-
-VV_LOCAL_SYMBOL readline__Action readline__Readline_analyse_extended_control(readline__Readline* r) {
-	_result_int _t1 = readline__Readline_read_char(r);
-	if (_t1.is_error) {
-		IError err = _t1.err;
-		_v_panic(_SLIT("Control sequence incomplete"));
-		VUNREACHABLE();
-	;
-	}
-	
-  (*(int*)_t1.data);
-	_result_int _t2 = readline__Readline_read_char(r);
-	if (_t2.is_error) {
-		IError err = _t2.err;
-		_v_panic(_SLIT("Control sequence incomplete"));
-		VUNREACHABLE();
-	;
-	}
-	
- 	int c =  (*(int*)_t2.data);
-	u8 /*A*/ _t3 = ((u8)(c));
-		switch (_t3) {
-		case '5': {
-				_result_int _t4 = readline__Readline_read_char(r);
-				if (_t4.is_error) {
-					IError err = _t4.err;
-					_v_panic(_SLIT("Control sequence incomplete"));
-					VUNREACHABLE();
-				;
-				}
-				
- 				int direction =  (*(int*)_t4.data);
-				u8 /*A*/ _t5 = ((u8)(direction));
-								switch (_t5) {
-					case 'C': {
-							readline__Action _t6 = readline__Action__move_cursor_word_right;
-							return _t6;
-					}
-					case 'D': {
-							readline__Action _t7 = readline__Action__move_cursor_word_left;
-							return _t7;
-					}
-					default: {
-							break;
-					}
-				}
-				
-				break;
-		}
-		default: {
-				break;
-		}
-	}
-	
-	readline__Action _t8 = readline__Action__nothing;
-	return _t8;
-}
-
-VV_LOCAL_SYMBOL readline__Action readline__Readline_analyse_extended_control_no_eat(readline__Readline* r, u8 last_c) {
-	_result_int _t1 = readline__Readline_read_char(r);
-	if (_t1.is_error) {
-		IError err = _t1.err;
-		_v_panic(_SLIT("Control sequence incomplete"));
-		VUNREACHABLE();
-	;
-	}
-	
- 	int c =  (*(int*)_t1.data);
-	u8 /*A*/ _t2 = ((u8)(c));
-		switch (_t2) {
-		case '~': {
-				switch (last_c) {
-					case '3': {
-							readline__Action _t3 = readline__Action__delete_right;
-							return _t3;
-					}
-					case '2': {
-							readline__Action _t4 = readline__Action__overwrite;
-							return _t4;
-					}
-					default: {
-							break;
-					}
-				}
-				
-				break;
-		}
-		default: {
-				break;
-		}
-	}
-	
-	readline__Action _t5 = readline__Action__nothing;
-	return _t5;
-}
-
-VV_LOCAL_SYMBOL bool readline__Readline_execute(readline__Readline* r, readline__Action a, int c) {
-	switch (a) {
-		case readline__Action__eof: {
-				bool _t1 = readline__Readline_eof(r);
-				return _t1;
-		}
-		case readline__Action__insert_character: {
-				readline__Readline_insert_character(r, c);
-				break;
-		}
-		case readline__Action__commit_line: {
-				bool _t2 = readline__Readline_commit_line(r);
-				return _t2;
-		}
-		case readline__Action__delete_left: {
-				readline__Readline_delete_character(r);
-				break;
-		}
-		case readline__Action__delete_right: {
-				readline__Readline_suppr_character(r);
-				break;
-		}
-		case readline__Action__delete_line: {
-				readline__Readline_delete_line(r);
-				break;
-		}
-		case readline__Action__delete_word_left: {
-				readline__Readline_delete_word_left(r);
-				break;
-		}
-		case readline__Action__move_cursor_left: {
-				readline__Readline_move_cursor_left(r);
-				break;
-		}
-		case readline__Action__move_cursor_right: {
-				readline__Readline_move_cursor_right(r);
-				break;
-		}
-		case readline__Action__move_cursor_start: {
-				readline__Readline_move_cursor_start(r);
-				break;
-		}
-		case readline__Action__move_cursor_end: {
-				readline__Readline_move_cursor_end(r);
-				break;
-		}
-		case readline__Action__move_cursor_word_left: {
-				readline__Readline_move_cursor_word_left(r);
-				break;
-		}
-		case readline__Action__move_cursor_word_right: {
-				readline__Readline_move_cursor_word_right(r);
-				break;
-		}
-		case readline__Action__history_previous: {
-				readline__Readline_history_previous(r);
-				break;
-		}
-		case readline__Action__history_next: {
-				readline__Readline_history_next(r);
-				break;
-		}
-		case readline__Action__overwrite: {
-				readline__Readline_switch_overwrite(r);
-				break;
-		}
-		case readline__Action__clear_screen: {
-				readline__Readline_clear_screen(r);
-				break;
-		}
-		case readline__Action__suspend: {
-				readline__Readline_suspend(r);
-				break;
-		}
-		case readline__Action__completion: {
-				readline__Readline_completion(r);
-				break;
-		}
-		case readline__Action__nothing:
-		default: {
-				break;
-		}
-	}
-	
-	bool _t3 = false;
-	return _t3;
-}
-
-VV_LOCAL_SYMBOL int readline__get_screen_columns(void) {
-	readline__Winsize ws = ((readline__Winsize){.ws_row = 0,.ws_col = 0,.ws_xpixel = 0,.ws_ypixel = 0,});
-	int cols = (ioctl(1, TIOCGWINSZ, &ws) == -1 ? (80) : (((int)(ws.ws_col))));
-	return cols;
-}
-
-VV_LOCAL_SYMBOL void readline__shift_cursor(int xpos, int yoffset) {
-	if (yoffset != 0) {
-		if (yoffset > 0) {
-			term__cursor_down(yoffset);
-		} else {
-			term__cursor_up(-yoffset);
-		}
-	}
-	print( str_intp(2, _MOV((StrIntpData[]){{_SLIT("\033["), 0xfe07, {.d_i32 = (int)(xpos + 1)}}, {_SLIT("G"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL Array_int readline__calculate_screen_position(int x_in, int y_in, int screen_columns, int char_count, Array_int inp) {
-	Array_int out = array_clone_to_depth_noscan(&inp, 0);
-	int x = x_in;
-	int y = y_in;
-	array_set(&out, 0, &(int[]) { x });
-	array_set(&out, 1, &(int[]) { y });
-	for (int chars_remaining = char_count; chars_remaining > 0; ) {
-		int chars_this_row = (((int)(x + chars_remaining)) < screen_columns ? (chars_remaining) : ((int)(screen_columns - x)));
-		array_set(&out, 0, &(int[]) { (int)(x + chars_this_row) });
-		array_set(&out, 1, &(int[]) { y });
-		chars_remaining -= chars_this_row;
-		x = 0;
-		y++;
-	}
-	if ((*(int*)array_get(out, 0)) == screen_columns) {
-		array_set(&out, 0, &(int[]) { 0 });
-		(*(int*)array_get(out, 1))++;
-	}
-	return out;
-}
-
-VV_LOCAL_SYMBOL int readline__get_prompt_offset(string prompt) {
-	int len = 0;
-	for (int i = 0; i < prompt.len; i++) {
-		if (string_at(prompt, i) == '\e') {
-			for (; i < prompt.len && string_at(prompt, i) != 'm'; i++) {
-			}
-		} else {
-			len = (int)(len + 1);
-		}
-	}
-	int _t1 = (int)(prompt.len - len);
-	return _t1;
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_refresh_line(readline__Readline* r) {
-	Array_int end_of_input = new_array_from_c_array_noscan(2, 2, sizeof(int), _MOV((int[2]){0, 0}));
-	end_of_input = readline__calculate_screen_position(r->prompt.len, 0, readline__get_screen_columns(), r->current.len, end_of_input);
-	Array_rune _t1 = {0};
-	Array_rune _t1_orig = r->current;
-	int _t1_len = _t1_orig.len;
-	_t1 = __new_array_noscan(0, _t1_len, sizeof(rune));
-
-	for (int _t2 = 0; _t2 < _t1_len; ++_t2) {
-		rune it = ((rune*) _t1_orig.data)[_t2];
-		if (it == '\n') {
-			array_push_noscan((array*)&_t1, &it);
-		}
-	}
-	(*(int*)array_get(end_of_input, 1)) +=_t1.len;
-	Array_int cursor_pos = new_array_from_c_array_noscan(2, 2, sizeof(int), _MOV((int[2]){0, 0}));
-	cursor_pos = readline__calculate_screen_position(r->prompt.len, 0, readline__get_screen_columns(), r->cursor, cursor_pos);
-	readline__shift_cursor(0, -r->cursor_row_offset);
-	term__erase_toend();
-	print(r->prompt);
-	print(Array_rune_string(r->current));
-	if ((*(int*)array_get(end_of_input, 0)) == 0 && (*(int*)array_get(end_of_input, 1)) > 0) {
-		print(_SLIT("\n"));
-	}
-	readline__shift_cursor((int)((*(int*)array_get(cursor_pos, 0)) - r->prompt_offset), -((int)((*(int*)array_get(end_of_input, 1)) - (*(int*)array_get(cursor_pos, 1)))));
-	r->cursor_row_offset = (*(int*)array_get(cursor_pos, 1));
-}
-
-VV_LOCAL_SYMBOL bool readline__Readline_eof(readline__Readline* r) {
-	array_insert(&r->previous_lines, 1, &(Array_rune[]){r->current});
-	r->cursor = r->current.len;
-	if (r->is_tty) {
-		readline__Readline_refresh_line(r);
-	}
-	bool _t1 = true;
-	return _t1;
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_insert_character(readline__Readline* r, int c) {
-	if (!r->overwrite || r->cursor == r->current.len) {
-		array_insert_noscan(&r->current, r->cursor, &(rune[]){c});
-	} else {
-		array_set(&r->current, r->cursor, &(rune[]) { ((rune)(c)) });
-	}
-	r->cursor++;
-	if (r->is_tty) {
-		readline__Readline_refresh_line(r);
-	}
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_delete_character(readline__Readline* r) {
-	if (r->cursor <= 0) {
-		return;
-	}
-	r->cursor--;
-	array_delete(&r->current, r->cursor);
-	readline__Readline_refresh_line(r);
-	readline__Readline_completion_clear(r);
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_delete_word_left(readline__Readline* r) {
-	if (r->cursor == 0) {
-		return;
-	}
-	int orig_cursor = r->cursor;
-	if (r->cursor >= r->current.len) {
-		r->cursor = (int)(r->current.len - 1);
-	}
-	if ((*(rune*)array_get(r->current, r->cursor)) != ' ' && (*(rune*)array_get(r->current, (int)(r->cursor - 1))) == ' ') {
-		r->cursor--;
-	}
-	if ((*(rune*)array_get(r->current, r->cursor)) == ' ') {
-		for (;;) {
-			if (!(r->cursor > 0 && (*(rune*)array_get(r->current, r->cursor)) == ' ')) break;
-			r->cursor--;
-		}
-		for (;;) {
-			if (!(r->cursor > 0 && (*(rune*)array_get(r->current, (int)(r->cursor - 1))) != ' ')) break;
-			r->cursor--;
-		}
-	} else {
-		for (;;) {
-			if (!(r->cursor > 0)) break;
-			if ((*(rune*)array_get(r->current, (int)(r->cursor - 1))) == ' ') {
-				break;
-			}
-			r->cursor--;
-		}
-	}
-	array_delete_many(&r->current, r->cursor, (int)(orig_cursor - r->cursor));
-	readline__Readline_refresh_line(r);
-	readline__Readline_completion_clear(r);
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_delete_line(readline__Readline* r) {
-	r->current = __new_array_with_default_noscan(0, 0, sizeof(rune), 0);
-	r->cursor = 0;
-	readline__Readline_refresh_line(r);
-	readline__Readline_completion_clear(r);
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_suppr_character(readline__Readline* r) {
-	if (r->cursor >= r->current.len) {
-		return;
-	}
-	array_delete(&r->current, r->cursor);
-	readline__Readline_refresh_line(r);
-}
-
-VV_LOCAL_SYMBOL bool readline__Readline_commit_line(readline__Readline* r) {
-	array_insert(&r->previous_lines, 1, &(Array_rune[]){r->current});
-	array_push_noscan((array*)&r->current, _MOV((rune[]){ '\n' }));
-	r->cursor = r->current.len;
-	if (r->is_tty) {
-		readline__Readline_refresh_line(r);
-		println(_SLIT(""));
-	}
-	bool _t2 = true;
-	return _t2;
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_left(readline__Readline* r) {
-	if (r->cursor > 0) {
-		r->cursor--;
-		readline__Readline_refresh_line(r);
-	}
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_right(readline__Readline* r) {
-	if (r->cursor < r->current.len) {
-		r->cursor++;
-		readline__Readline_refresh_line(r);
-	}
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_start(readline__Readline* r) {
-	r->cursor = 0;
-	readline__Readline_refresh_line(r);
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_end(readline__Readline* r) {
-	r->cursor = r->current.len;
-	readline__Readline_refresh_line(r);
-}
-
-VV_LOCAL_SYMBOL bool readline__Readline_is_break_character(readline__Readline* r, string c) {
-	string break_characters = _SLIT(" \t\v\f\a\b\r\n`~!@#$%^&*()-=+[{]}\\|;:\'\",<.>/?");
-	bool _t1 = string_contains(break_characters, c);
-	return _t1;
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_word_left(readline__Readline* r) {
-	if (r->cursor > 0) {
-		for (; r->cursor > 0 && readline__Readline_is_break_character(r, rune_str((*(rune*)array_get(r->current, (int)(r->cursor - 1))))); r->cursor--) {
-		}
-		for (; r->cursor > 0 && !readline__Readline_is_break_character(r, rune_str((*(rune*)array_get(r->current, (int)(r->cursor - 1))))); r->cursor--) {
-		}
-		readline__Readline_refresh_line(r);
-	}
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_move_cursor_word_right(readline__Readline* r) {
-	if (r->cursor < r->current.len) {
-		for (; r->cursor < r->current.len && readline__Readline_is_break_character(r, rune_str((*(rune*)array_get(r->current, r->cursor)))); r->cursor++) {
-		}
-		for (; r->cursor < r->current.len && !readline__Readline_is_break_character(r, rune_str((*(rune*)array_get(r->current, r->cursor)))); r->cursor++) {
-		}
-		readline__Readline_refresh_line(r);
-	}
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_switch_overwrite(readline__Readline* r) {
-	r->overwrite = !r->overwrite;
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_clear_screen(readline__Readline* r) {
-	term__set_cursor_position(((term__Coord){.x = 1,.y = 1,}));
-	term__erase_clear();
-	readline__Readline_refresh_line(r);
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_history_previous(readline__Readline* r) {
-	if ((int)(r->search_index + 2) >= r->previous_lines.len) {
-		return;
-	}
-	if (r->search_index == 0) {
-		array_set(&r->previous_lines, 0, &(Array_rune[]) { r->current });
-	}
-	r->search_index++;
-	Array_rune prev_line = (*(Array_rune*)array_get(r->previous_lines, r->search_index));
-	if (r->skip_empty && Array_rune_arr_eq(prev_line, __new_array_with_default_noscan(0, 0, sizeof(rune), 0))) {
-		readline__Readline_history_previous(r);
-	} else {
-		r->current = prev_line;
-		r->cursor = r->current.len;
-		readline__Readline_refresh_line(r);
-	}
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_history_next(readline__Readline* r) {
-	if (r->search_index <= 0) {
-		return;
-	}
-	r->search_index--;
-	r->current = (*(Array_rune*)array_get(r->previous_lines, r->search_index));
-	r->cursor = r->current.len;
-	readline__Readline_refresh_line(r);
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_completion(readline__Readline* r) {
-	if (r->completion_list.len == 0 && r->completion_callback == (voidptr)((void*)0)) {
-		return;
-	}
-	Array_rune prefix = (r->last_prefix_completion.len > 0 ? (r->last_prefix_completion) : (r->current));
-	if (prefix.len == 0) {
-		return;
-	}
-	Array_string _t1; /* if prepend */
-	if (r->completion_list.len > 0) {
-		string sprefix = Array_rune_string(prefix);
-		Array_string _t2 = {0};
-		Array_string _t2_orig = r->completion_list;
-		int _t2_len = _t2_orig.len;
-		_t2 = __new_array(0, _t2_len, sizeof(string));
-
-		for (int _t3 = 0; _t3 < _t2_len; ++_t3) {
-			string it = ((string*) _t2_orig.data)[_t3];
-			if (string_starts_with(it, sprefix)) {
-				array_push((array*)&_t2, &it);
-			}
-		}
-		_t1 =_t2;
-	} else if (r->completion_callback != (voidptr)((void*)0)) {
-		_t1 = r->completion_callback(Array_rune_string(prefix));
-	} else {
-		_t1 = __new_array_with_default(0, 0, sizeof(string), 0);
-	}
-	Array_string opts =  _t1;
-	if (opts.len == 0) {
-		readline__Readline_completion_clear(r);
-		return;
-	}
-	if (r->last_prefix_completion.len != 0) {
-		if (opts.len > (int)(r->last_completion_offset + 1)) {
-			r->last_completion_offset += 1;
-		} else {
-			r->last_completion_offset = 0;
-		}
-	} else {
-		r->last_prefix_completion = r->current;
-	}
-	r->current = string_runes((*(string*)array_get(opts, r->last_completion_offset)));
-	r->cursor = r->current.len;
-	readline__Readline_refresh_line(r);
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_completion_clear(readline__Readline* r) {
-	array_clear(&r->last_prefix_completion);
-	r->last_completion_offset = 0;
-}
-
-VV_LOCAL_SYMBOL void readline__Readline_suspend(readline__Readline* r) {
-	bool is_standalone = !string__eq(os__getenv(_SLIT("VCHILD")), _SLIT("true"));
-	readline__Readline_disable_raw_mode(r);
-	if (!is_standalone) {
-		{ // Unsafe block
-			int ppid = getppid();
-			kill(ppid, SIGSTOP);
-		}
-	}
-	raise(SIGSTOP);
-	readline__Readline_enable_raw_mode(r);
-	readline__Readline_refresh_line(r);
-	if (r->is_tty) {
-		readline__Readline_refresh_line(r);
-	}
 }
 
 // Attr: [inline]
@@ -28065,7 +26322,7 @@ void client__set_sever(string port, bool keep) {
 	_result_net__TcpListener_ptr _t1 = net__listen_tcp(net__AddrFamily__ip6, string__plus(_SLIT(":"), port), ((net__ListenOptions){.dualstack = true,.backlog = 128,}));
 	if (_t1.is_error) {
 		IError err = _t1.err;
-		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("\033[31m[false] \033[0mThe port: "), 0xfe10, {.d_s = port}}, {_SLIT(" listening failed."), 0, { .d_c = 0 }}})));
+		println( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__false_log}}, {_SLIT("The port: "), 0xfe10, {.d_s = port}}, {_SLIT(" listening failed."), 0, { .d_c = 0 }}})));
 		_v_exit(1);
 		VUNREACHABLE();
 	;
@@ -28215,40 +26472,31 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 
 void client__send_message(net__TcpConn* socket) {
 	bool client__send_message_defer_0 = false;
-	string true_log;
 	string data;
-	true_log = _SLIT("\033[32m[true] \033[0m");
 	data = _SLIT("test");
 	for (;;) {
-		_result_string _t1 = readline__read_line(_SLIT(""));
-		if (_t1.is_error) {
-			IError err = _t1.err;
-			*(string*) _t1.data = _SLIT("");
-		}
-		
- 		data =  (*(string*)_t1.data);
-		println(data);
+		data = string__plus(os__input(_SLIT("")), _SLIT("\n"));
 		if (string__eq(data, _SLIT(":q"))) {
-			data =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("closing the socket..."), 0, { .d_c = 0 }}}));
+			data =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__true_log}}, {_SLIT("closing the socket..."), 0, { .d_c = 0 }}}));
 			client__for_free(data, socket);
 			_v_exit(1);
 			VUNREACHABLE();
 		}
 		client__send_message_defer_0 = true;
-		if (string__eq(os__user_os(), _SLIT("linux"))) {
-			data = string__plus(data, _SLIT("\n"));
-		}
-		_result_int _t2 = net__TcpConn_write_string(socket,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = data}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		if (_t2.is_error) {
-			IError err = _t2.err;
-			continue;
+		_result_int _t1 = net__TcpConn_write_string(socket,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = data}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		if (_t1.is_error) {
+			IError err = _t1.err;
+			println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__warn_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
+			_v_exit(1);
+			VUNREACHABLE();
+		;
 		}
 		
-  (*(int*)_t2.data);
+  (*(int*)_t1.data);
 	}
 	// Defer begin
 	if (client__send_message_defer_0) {
-		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = true_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
+		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__true_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
 		client__for_free(data, socket);
 	}
 	// Defer end
@@ -28257,32 +26505,16 @@ void client__send_message(net__TcpConn* socket) {
 void client__for_free(string data, net__TcpConn* socket) {
 	println(data);
 	string_free(&data);
-	_result_void _t1 = net__TcpConn_close(socket);
-	if (_t1.is_error) {
-		IError err = _t1.err;
-		_v_exit(1);
-		VUNREACHABLE();
-	;
-	}
-	
- ;
+	_v_exit(1);
+	VUNREACHABLE();
 }
 
 VV_LOCAL_SYMBOL void main__main(void) {
-	string false_log = _SLIT("\033[31m[false] \033[0m");
-	string true_log = _SLIT("\033[32m[true] \033[0m");
-	string warn_log = _SLIT("\033[33m[warn] \033[0m");
-	string version = _SLIT("v0.1.0");
+	string version = _SLIT("v0.1.4");
 	Array_string args = array_clone_to_depth(&_const_os__args, 0);
 	if (args.len == 1) {
 		string data = string__plus((*(string*)array_get(args, 0)), _SLIT(" "));
-		_result_string _t1 = readline__read_line(_SLIT("Cmd line:"));
-		if (_t1.is_error) {
-			IError err = _t1.err;
-			*(string*) _t1.data = _SLIT("");
-		}
-		
- 		data = string__plus(data,  (*(string*)_t1.data));
+		data = string__plus(data, os__input(_SLIT("Cmd line:")));
 		args = string_split(data, _SLIT(" "));
 	}
 	Array_cmd__CmdOption long_options = new_array_from_c_array(4, 4, sizeof(cmd__CmdOption), _MOV((cmd__CmdOption[4]){((cmd__CmdOption){.abbr = _SLIT("-h"),.full = _SLIT("--help"),.vari = _SLIT(""),.defa = _SLIT(""),.desc = _SLIT("display this help and exit."),}), ((cmd__CmdOption){.abbr = _SLIT("-e"),.full = _SLIT("--exec"),.vari = _SLIT("[shell]"),.defa = _SLIT("false"),.desc = _SLIT("program to exec after connect."),}), ((cmd__CmdOption){.abbr = _SLIT("-lp"),.full = _SLIT("--listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("listen the local port number."),}), ((cmd__CmdOption){.abbr = _SLIT("-klp"),.full = _SLIT("--keep_listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("keep to listen the local port number."),})}));
@@ -28296,7 +26528,7 @@ VV_LOCAL_SYMBOL void main__main(void) {
 		if (!string__eq(cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v))), _SLIT("false"))) {
 			connect = false;
 			if (string__eq((*(cmd__CmdOption*)array_get(long_options, v)).abbr, _SLIT("-e"))) {
-				println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = warn_log}}, {_SLIT("\346\262\241\345\206\231\345\256\214, \347\234\213test\346\226\207\344\273\266\350\207\252\345\267\261\350\241\245\346\210\226\350\200\205\347\255\211\346\233\264\346\226\260\345\220\247"), 0, { .d_c = 0 }}})));
+				println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__warn_log}}, {_SLIT("\346\262\241\345\206\231\345\256\214, \347\234\213test\346\226\207\344\273\266\350\207\252\345\267\261\350\241\245\346\210\226\350\200\205\347\255\211\346\233\264\346\226\260\345\220\247"), 0, { .d_c = 0 }}})));
 				_v_exit(1);
 				VUNREACHABLE();
 			}
@@ -28310,34 +26542,34 @@ VV_LOCAL_SYMBOL void main__main(void) {
 	}
 	if (connect) {
 		if (args.len < 3) {
-			println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = false_log}}, {_SLIT("Please refer to the help for use."), 0, { .d_c = 0 }}})));
+			println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__false_log}}, {_SLIT("Please refer to the help for use."), 0, { .d_c = 0 }}})));
 			main__help(long_options, version);
 			_v_exit(1);
 			VUNREACHABLE();
 		}
 		string addr = (*(string*)array_get(args, 1));
 		string port = (*(string*)array_get(args, 2));
-		_result_net__TcpConn_ptr _t2 = net__dial_tcp(string__plus(string__plus(addr, _SLIT(":")), port));
-		if (_t2.is_error) {
-			IError err = _t2.err;
-			println( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = false_log}}, {_SLIT0, 0xfe10, {.d_s = addr}}, {_SLIT(":"), 0xfe10, {.d_s = port}}, {_SLIT(" not found."), 0, { .d_c = 0 }}})));
+		_result_net__TcpConn_ptr _t1 = net__dial_tcp(string__plus(string__plus(addr, _SLIT(":")), port));
+		if (_t1.is_error) {
+			IError err = _t1.err;
+			println( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__false_log}}, {_SLIT0, 0xfe10, {.d_s = addr}}, {_SLIT(":"), 0xfe10, {.d_s = port}}, {_SLIT(" not found."), 0, { .d_c = 0 }}})));
 			_v_exit(1);
 			VUNREACHABLE();
 		;
 		}
 		
- 		net__TcpConn* socket =  (*(net__TcpConn**)_t2.data);
+ 		net__TcpConn* socket =  (*(net__TcpConn**)_t1.data);
 		// start go
-		thread_arg_main__load_data *arg__t3 = (thread_arg_main__load_data *) _v_malloc(sizeof(thread_arg_main__load_data));
-		arg__t3->fn = main__load_data;
-		arg__t3->arg1 = socket;
-		pthread_t thread__t3;
-		pthread_attr_t thread__t3_attributes;
-		pthread_attr_init(&thread__t3_attributes);
-		pthread_attr_setstacksize(&thread__t3_attributes, 8388608); // fn: main.load_data
-		int _t3_thr_res = pthread_create(&thread__t3, &thread__t3_attributes, (void*)main__load_data_thread_wrapper, arg__t3);
-		if (_t3_thr_res) panic_error_number(tos3("`go main__load_data()`: "), _t3_thr_res);
-		pthread_detach(thread__t3);
+		thread_arg_main__load_data *arg__t2 = (thread_arg_main__load_data *) _v_malloc(sizeof(thread_arg_main__load_data));
+		arg__t2->fn = main__load_data;
+		arg__t2->arg1 = socket;
+		pthread_t thread__t2;
+		pthread_attr_t thread__t2_attributes;
+		pthread_attr_init(&thread__t2_attributes);
+		pthread_attr_setstacksize(&thread__t2_attributes, 8388608); // fn: main.load_data
+		int _t2_thr_res = pthread_create(&thread__t2, &thread__t2_attributes, (void*)main__load_data_thread_wrapper, arg__t2);
+		if (_t2_thr_res) panic_error_number(tos3("`go main__load_data()`: "), _t2_thr_res);
+		pthread_detach(thread__t2);
 		// end go
 		;
 		client__send_message(socket);
@@ -28386,6 +26618,10 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_min_i64 = ((i64)((int_literal)(-9223372036854775807 - 1)));
 	_const_max_i64 = ((i64)(9223372036854775807));
 	_const_none__ = I_None___to_Interface_IError(((None__*)memdup(&(None__){.Error = ((Error){EMPTY_STRUCT_INITIALIZATION}),}, sizeof(None__))));
+	// Initializations of consts for module log
+	_const_log__false_log = _SLIT("\033[31m[False] \033[0m");
+	_const_log__true_log = _SLIT("\033[32m[True] \033[0m");
+	_const_log__warn_log = _SLIT("\033[33m[Warn] \033[0m");
 	// Initializations of consts for module time
 	_const_time__days_string = _SLIT("MonTueWedThuFriSatSun");
 	_const_time__months_string = _SLIT("JanFebMarAprMayJunJulAugSepOctNovDec");

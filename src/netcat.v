@@ -2,7 +2,6 @@
 
 module main
 
-import readline { read_line }
 import os
 import cmd { options, set_options, CmdOption }
 import net
@@ -10,16 +9,15 @@ import client { set_sever, send_message, for_free }
 import log
 
 fn main() {
-	version := 'v0.1.1'
+	version := 'v0.1.4'
 
 
 	mut args := os.args.clone()
 
 	// now you can run nc.exe in windows.
 	if args.len == 1 {
-			mut data := args[0] + ' ' 
-			data += read_line('Cmd line:') or { '' }
-			args = data.split(' ')
+			mut data := args[0] + ' '
+			data += os.input('Cmd line:')			args = data.split(' ')
 	}
 
 	long_options := [
