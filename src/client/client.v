@@ -45,7 +45,7 @@ fn handle_client(mut socket net.TcpConn) {
         // socket向服务端写入字符
         for {
                 // 对信息进行处理
-                received_line := reader.read_line() or { return }
+                received_line := reader.read_line() or { '' }
                 if received_line == '' {
                         return
                 }

@@ -12,9 +12,12 @@ fn main() {
 	if p.is_pending(.stdout) { 
 		dump( p.stdout_read() ) 
 	}
-	p.wait()
-	data := p.pipe_read(.stdin) or { '' }
-	println(data)
+	//p.wait()
+	if p.is_pending(.stdin) { 
+		p.stdin_write('aaa') 
+	}
+	//data := p.pipe_read(.stdin) or { '' }
+	//println(data)
 
 	//p.stdin_write('ls')	
 	

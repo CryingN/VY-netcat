@@ -9,7 +9,7 @@ import client { set_sever, send_message, for_free }
 import log
 
 fn main() {
-	version := 'v0.1.4'
+	version := 'v0.2.0'
 
 
 	mut args := os.args.clone()
@@ -78,8 +78,9 @@ fn main() {
 			}
 		}
 	}
-
-	if connect {	
+	
+	// 连接部分
+	if connect {
 		if args.len < 3 {
 				println('${log.false_log}Please refer to the help for use.')
                 help(long_options, version)

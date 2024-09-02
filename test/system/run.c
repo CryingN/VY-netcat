@@ -7,8 +7,7 @@ int main() {
 	char b[1];
 	printf("test:");
 	scanf("%s",a);
-	printf("%s\n",a);
-	printf("and:");
+	printf("%s\nand:",a);
 	scanf("%s",b);
 	printf("%s\n",b);
 	//system("/bin/sh");

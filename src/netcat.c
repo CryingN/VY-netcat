@@ -26405,6 +26405,11 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 		_result_string _t1 = io__BufferedReader_read_line(reader, ((io__BufferedReadLineConfig){.delim = '\n',}));
 		if (_t1.is_error) {
 			IError err = _t1.err;
+			*(string*) _t1.data = _SLIT("");
+		}
+		
+ 		string received_line =  (*(string*)_t1.data);
+		if ((received_line).len == 0) {
 				// Defer begin
 				if (client__handle_client_defer_1) {
 					io__BufferedReader_free(reader);
@@ -26425,29 +26430,6 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 				// Defer end
 			return;
 		}
-		
- 		string received_line =  (*(string*)_t1.data);
-		if ((received_line).len == 0) {
-				// Defer begin
-				if (client__handle_client_defer_1) {
-					io__BufferedReader_free(reader);
-				}
-				// Defer end
-				// Defer begin
-				if (client__handle_client_defer_0) {
-					_result_void _t3 = net__TcpConn_close(socket);
-					if (_t3.is_error) {
-						IError err = _t3.err;
-						_v_exit(1);
-						VUNREACHABLE();
-					;
-					}
-					
- ;
-				}
-				// Defer end
-			return;
-		}
 		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = received_line}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	// Defer begin
@@ -26457,9 +26439,9 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 	// Defer end
 	// Defer begin
 	if (client__handle_client_defer_0) {
-		_result_void _t4 = net__TcpConn_close(socket);
-		if (_t4.is_error) {
-			IError err = _t4.err;
+		_result_void _t3 = net__TcpConn_close(socket);
+		if (_t3.is_error) {
+			IError err = _t3.err;
 			_v_exit(1);
 			VUNREACHABLE();
 		;
@@ -26510,7 +26492,7 @@ void client__for_free(string data, net__TcpConn* socket) {
 }
 
 VV_LOCAL_SYMBOL void main__main(void) {
-	string version = _SLIT("v0.1.4");
+	string version = _SLIT("v0.2.0");
 	Array_string args = array_clone_to_depth(&_const_os__args, 0);
 	if (args.len == 1) {
 		string data = string__plus((*(string*)array_get(args, 0)), _SLIT(" "));
