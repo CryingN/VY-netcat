@@ -2,7 +2,7 @@ module client
 
 import net
 import io
-import os { user_os, input }
+import readline { Readline }
 import log
 
 pub fn set_sever(port string, keep bool) {
@@ -63,9 +63,11 @@ pub fn send_message(mut socket net.TcpConn) {
          * socket is break
          * I think the problem comes from vlang
         ******************************************/
-        for {
-                data = input('') + '\n'
+	
+	mut line := Readline{ skip_empty : true }
 
+        for {
+                data = line.read_line('') or { return }
                 // close the socket
 	        if data == ':q' {
 		        data = '${log.true_log}closing the socket...'
@@ -87,15 +89,12 @@ pub fn send_message(mut socket net.TcpConn) {
                  * when use os.inupt() not readline.read_line(), 
                  * we shouldn't add '\n' for linux.
                 *******************************/
-                /*
-                if user_os() == 'linux' {
+		
+                $if linux {
                         data += '\n'
                 }
-                */
-
-
-	        socket.write_string('${data}') or { 
-			
+                
+	        socket.write_string('${data}') or {
         	        println('${log.warn_log}close the socket.')
 			exit(1)
 		}

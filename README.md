@@ -15,21 +15,27 @@ VY-netcat is a network tool written in the [vlang](https://vlang.io/) language, 
 
 * [gnu-netcat](https://netcat.sourceforge.net/): Solves the issue of not being able to maintain the connection after listening ends.
 * [openbsd-netcat](https://man.openbsd.org/nc.1): Addresses the issue of sending commands for execution.
+* Support Vim interaction ideas: `:q` exit; And continue to improve `:wq` afterwards, exit and save the data, `:![local sh]` Do not output and execute local instructions.
+* Support Linux interaction: Memory history instruction
 
 # Development Status
 
-| Requirement             | Status   | Developer  |
-|:-----------------------:|:--------:|:----------:|
-| Help Menu               | Solved   | sudopacman |
-| Basic Connection        | Solved   | sudopacman |
-| GCC Compilation Support | Solved   | sudopacman |
-| Cross-Compilation       | hidden   | sudopacman |
-| Windows Compatibility   | Minimal  | sudopacman |
-| Socket Crash Issue      | Solved   | sudopacman |
-| Command Execution       | Unsolved |            |
-| Listen on Port          | Solved   | sudopacman |
-| Keep Listening          | Solved   | sudopacman |
-| `ctrl`+`C` to exit      | Solved   | sudopacman |
+| Requirement                | Status   | Developer  |
+|:--------------------------:|:--------:|:----------:|
+| Help Menu                  | Solved   | sudopacman |
+| Basic Connection           | Solved   | sudopacman |
+| `nc [ip]:[port]`           | Unsolved |            |
+| GCC Compilation Support    | Solved   | sudopacman |
+| Cross-Compilation          | Solved   | sudopacman |
+| Windows Compatibility      | Minimal  | sudopacman |
+| Socket Crash Issue         | Solved   | sudopacman |
+| Command Execution          | Unsolved |            |
+| Listen on Port             | Solved   | sudopacman |
+| Keep Listening             | Solved   | sudopacman |
+| `ctrl`+`C` to exit         | Solved   | sudopacman |
+| Memory history instruction | Solved   | sudopacman |
+| `:wq`                      |          |            |
+| `:![local sh]`             |          |            |
 
 # Usage
 
@@ -74,7 +80,7 @@ Below is the description from the `help` menu.
 
 ```bash
 [root_cn@archlinux vy-netcat]$ ./nc -h  
-VY netcat v0.2.0, the network tools suitable for CTF.  
+VY netcat v0.2.1, the network tools suitable for CTF.  
 Basic usages:  
  connect to somewhere:  nc [addr] [port]  
  listen to somewhere:   nc -lp [port]  

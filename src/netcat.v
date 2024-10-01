@@ -9,7 +9,7 @@ import client { set_sever, send_message, for_free }
 import log
 
 fn main() {
-	version := 'v0.2.0'
+	version := 'v0.2.1'
 
 
 	mut args := os.args.clone()

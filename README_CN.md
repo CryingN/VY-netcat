@@ -17,20 +17,28 @@
 
 * [openbsd-netcat](https://man.openbsd.org/nc.1): 解决将执行命令发送的问题
 
+* 支持vim交互思路: `:q`退出; 并在之后继续完善`:wq`退出并保存数据, `:![本地指令]`不输出执行本地指令
+
+* 支持linux交互: 记忆历史指令
+
 # 开发情况
 
-| 需求           | 解决情况 | 开发者        |
-|:------------:|:----:|:----------:|
-| 帮助菜单         | 已解决  | sudopacman |
-| 基础连接         | 已解决  | sudopacman |
-| 支持gcc编译      | 已解决  | sudopacman |
-| 交叉编译         | 已回避  | sudopacman |
-| 兼容windows    | 最低程度 | sudopacman |
-| socket崩溃问题   | 已解决  | sudopacman |
-| 指令执行         | 未解决  |            |
-| 监听端口         | 已解决  | sudopacman |
-| 保持监听         | 已解决  | sudopacman |
-| `ctrl`+`C`退出 | 已解决  | sudopacman |
+| 需求               | 解决情况 | 开发者        |
+|:----------------:|:----:|:----------:|
+| 帮助菜单             | 已解决  | sudopacman |
+| 基础连接             | 已解决  | sudopacman |
+| `nc [ip]:[port]` | 未解决  |            |
+| 支持gcc编译          | 已解决  | sudopacman |
+| 交叉编译             | 已解决  | sudopacman |
+| 兼容windows        | 最低程度 | sudopacman |
+| socket崩溃问题       | 已解决  | sudopacman |
+| 指令执行             | 未解决  |            |
+| 监听端口             | 已解决  | sudopacman |
+| 保持监听             | 已解决  | sudopacman |
+| `ctrl`+`C`退出     | 已解决  | sudopacman |
+| 记忆历史指令           | 已解决  | sudopacman |
+| `:wq`            | 未解决  |            |
+| `:![本地指令]`       | 未解决  |            |
 
 # 使用
 
