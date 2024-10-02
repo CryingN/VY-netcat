@@ -28155,27 +28155,6 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 		}
 		
  		string received_line =  (*(string*)_t1.data);
-		if ((received_line).len == 0) {
-				// Defer begin
-				if (client__handle_client_defer_1) {
-					io__BufferedReader_free(reader);
-				}
-				// Defer end
-				// Defer begin
-				if (client__handle_client_defer_0) {
-					_result_void _t2 = net__TcpConn_close(socket);
-					if (_t2.is_error) {
-						IError err = _t2.err;
-						_v_exit(1);
-						VUNREACHABLE();
-					;
-					}
-					
- ;
-				}
-				// Defer end
-			return;
-		}
 		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = received_line}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	// Defer begin
@@ -28185,9 +28164,9 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 	// Defer end
 	// Defer begin
 	if (client__handle_client_defer_0) {
-		_result_void _t3 = net__TcpConn_close(socket);
-		if (_t3.is_error) {
-			IError err = _t3.err;
+		_result_void _t2 = net__TcpConn_close(socket);
+		if (_t2.is_error) {
+			IError err = _t2.err;
 			_v_exit(1);
 			VUNREACHABLE();
 		;
@@ -28211,14 +28190,14 @@ void client__send_message(net__TcpConn* socket) {
 		}
 		
  		data =  (*(string*)_t1.data);
-		if (string__eq(data, _SLIT(":q"))) {
+		data = string__plus(data, _SLIT("\n"));
+		if (string__eq(data, _SLIT(":q\r\n")) || string__eq(data, _SLIT(":q\n"))) {
 			data =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__true_log}}, {_SLIT("closing the socket..."), 0, { .d_c = 0 }}}));
 			client__for_free(data, socket);
 			_v_exit(1);
 			VUNREACHABLE();
 		}
 		client__send_message_defer_0 = true;
-		data = string__plus(data, _SLIT("\n"));
 		_result_int _t2 = net__TcpConn_write_string(socket,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = data}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		if (_t2.is_error) {
 			IError err = _t2.err;
@@ -28246,14 +28225,15 @@ void client__for_free(string data, net__TcpConn* socket) {
 }
 
 VV_LOCAL_SYMBOL void main__main(void) {
-	string version = _SLIT("v0.2.1");
+	string version = _SLIT("v0.3.0");
+	Array_cmd__CmdOption long_options = new_array_from_c_array(5, 5, sizeof(cmd__CmdOption), _MOV((cmd__CmdOption[5]){((cmd__CmdOption){.abbr = _SLIT("-h"),.full = _SLIT("--help"),.vari = _SLIT(""),.defa = _SLIT(""),.desc = _SLIT("display this help and exit."),}), ((cmd__CmdOption){.abbr = _SLIT("-e"),.full = _SLIT("--exec"),.vari = _SLIT("[shell]"),.defa = _SLIT("false"),.desc = _SLIT("program to exec after connect."),}), ((cmd__CmdOption){.abbr = _SLIT("-lp"),.full = _SLIT("--listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("listen the local port number."),}), ((cmd__CmdOption){.abbr = _SLIT("-klp"),.full = _SLIT("--keep_listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("keep to listen the local port number."),}), ((cmd__CmdOption){.abbr = _SLIT("-s"),.full = _SLIT("--security"),.vari = _SLIT("{0, 1}"),.defa = _SLIT("0"),.desc = _SLIT("set the security mode."),})}));
 	Array_string args = array_clone_to_depth(&_const_os__args, 0);
 	if (args.len == 1) {
-		string data = string__plus((*(string*)array_get(args, 0)), _SLIT(" "));
-		data = string__plus(data, os__input(_SLIT("Cmd line:")));
-		args = string_split(data, _SLIT(" "));
+		string arg = string__plus((*(string*)array_get(args, 0)), _SLIT(" "));
+		main__help(long_options, version);
+		arg = string__plus(arg, os__input(_SLIT("\033[36mCmd line: \033[0m")));
+		args = string_split(arg, _SLIT(" "));
 	}
-	Array_cmd__CmdOption long_options = new_array_from_c_array(4, 4, sizeof(cmd__CmdOption), _MOV((cmd__CmdOption[4]){((cmd__CmdOption){.abbr = _SLIT("-h"),.full = _SLIT("--help"),.vari = _SLIT(""),.defa = _SLIT(""),.desc = _SLIT("display this help and exit."),}), ((cmd__CmdOption){.abbr = _SLIT("-e"),.full = _SLIT("--exec"),.vari = _SLIT("[shell]"),.defa = _SLIT("false"),.desc = _SLIT("program to exec after connect."),}), ((cmd__CmdOption){.abbr = _SLIT("-lp"),.full = _SLIT("--listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("listen the local port number."),}), ((cmd__CmdOption){.abbr = _SLIT("-klp"),.full = _SLIT("--keep_listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("keep to listen the local port number."),})}));
 	if (cmd__set_options(args, (*(cmd__CmdOption*)array_get(long_options, 0)))) {
 		main__help(long_options, version);
 		_v_exit(1);
@@ -28277,18 +28257,21 @@ VV_LOCAL_SYMBOL void main__main(void) {
 		}
 	}
 	if (connect) {
-		if (args.len < 3) {
+		string connect_addr = _SLIT("");
+		if ((string_index((*(string*)array_get(args, 1)), _SLIT(":"))).state != 2) {
+			connect_addr = (*(string*)array_get(args, 1));
+		} else if (args.len < 3) {
 			println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__false_log}}, {_SLIT("Please refer to the help for use."), 0, { .d_c = 0 }}})));
 			main__help(long_options, version);
 			_v_exit(1);
 			VUNREACHABLE();
+		} else {
+			connect_addr = string__plus(string__plus((*(string*)array_get(args, 1)), _SLIT(":")), (*(string*)array_get(args, 2)));
 		}
-		string addr = (*(string*)array_get(args, 1));
-		string port = (*(string*)array_get(args, 2));
-		_result_net__TcpConn_ptr _t1 = net__dial_tcp(string__plus(string__plus(addr, _SLIT(":")), port));
+		_result_net__TcpConn_ptr _t1 = net__dial_tcp(connect_addr);
 		if (_t1.is_error) {
 			IError err = _t1.err;
-			println( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__false_log}}, {_SLIT0, 0xfe10, {.d_s = addr}}, {_SLIT(":"), 0xfe10, {.d_s = port}}, {_SLIT(" not found."), 0, { .d_c = 0 }}})));
+			println( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__false_log}}, {_SLIT0, 0xfe10, {.d_s = connect_addr}}, {_SLIT(" not found."), 0, { .d_c = 0 }}})));
 			_v_exit(1);
 			VUNREACHABLE();
 		;
@@ -28320,7 +28303,13 @@ VV_LOCAL_SYMBOL void main__load_data(net__TcpConn* socket) {
 }
 
 VV_LOCAL_SYMBOL void main__help(Array_cmd__CmdOption long_options, string version) {
-	string data =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("VY netcat "), 0xfe10, {.d_s = version}}, {_SLIT(", the network tools suitable for CTF.\nBasic usages:\n connect to somewhere:\011nc [addr] [port]\n listen to somewhere:\011nc -lp [port]\n keep to listen:\011\011nc -klp [port]\nCmdOptions:"), 0, { .d_c = 0 }}}));
+	string data =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("VY-netcat "), 0xfe10, {.d_s = version}}, {_SLIT(", the network tools suitable for CTF."), 0, { .d_c = 0 }}}));
+	data = string__plus(data, _SLIT("\nBasic usages:"));
+	data = string__plus(data, _SLIT("\n connect to somewhere:\tnc [addr] [port]"));
+	data = string__plus(data, _SLIT("\n \t\t\tnc [addr]:[port]"));
+	data = string__plus(data, _SLIT("\n listen to somewhere:\tnc -lp [port]"));
+	data = string__plus(data, _SLIT("\n keep to listen:\tnc -klp [port]"));
+	data = string__plus(data, _SLIT("\nCmdOptions:"));
 	println(data);
 	for (int _t1 = 0; _t1 < long_options.len; ++_t1) {
 		cmd__CmdOption v = ((cmd__CmdOption*)long_options.data)[_t1];

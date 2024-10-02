@@ -46,9 +46,6 @@ fn handle_client(mut socket net.TcpConn) {
         for {
                 // 对信息进行处理
                 received_line := reader.read_line() or { '' }
-                if received_line == '' {
-                        return
-                }
 		println('${received_line}')
         }
 }
@@ -57,28 +54,11 @@ fn handle_client(mut socket net.TcpConn) {
 // keep to send messages.
 pub fn send_message(mut socket net.TcpConn) {
         mut data := 'test' 
-        /******************************************
-         * warning:
-         * when read_line('') == ''
-         * socket is break
-         * I think the problem comes from vlang
-        ******************************************/
 	
 	mut line := Readline{ skip_empty : true }
 
         for {
                 data = line.read_line('') or { return }
-                // close the socket
-	        if data == ':q' {
-		        data = '${log.true_log}closing the socket...'
-		        for_free(data, mut socket)
-		        exit(1)
-        	}
-
-	        defer {
-        	        println('${log.true_log}close the socket.')
-        	        for_free(data, mut socket)
-                }
                 
                 /*******************************
                  * warning:
@@ -89,11 +69,23 @@ pub fn send_message(mut socket net.TcpConn) {
                  * when use os.inupt() not readline.read_line(), 
                  * we shouldn't add '\n' for linux.
                 *******************************/
-		
+
                 $if linux {
                         data += '\n'
                 }
-                
+
+                if data == ':q\r\n' || data == ':q\n' {
+		        data = '${log.true_log}closing the socket...'
+		        for_free(data, mut socket)
+	                exit(1)
+                }
+                // close the socket
+
+	        defer {
+        	        println('${log.true_log}close the socket.')
+        	        for_free(data, mut socket)
+                }
+                                
 	        socket.write_string('${data}') or {
         	        println('${log.warn_log}close the socket.')
 			exit(1)

@@ -5,7 +5,7 @@
 int main() {
 	char a[1];
 	char b[1];
-	printf("test:");
+	printf("test:\n");
 	scanf("%s",a);
 	printf("%s\nand:",a);
 	scanf("%s",b);

@@ -27,10 +27,10 @@
 |:----------------:|:----:|:----------:|
 | 帮助菜单             | 已解决  | sudopacman |
 | 基础连接             | 已解决  | sudopacman |
-| `nc [ip]:[port]` | 未解决  |            |
+| `nc [ip]:[port]`    | 已解决  | sudopacman  |
 | 支持gcc编译          | 已解决  | sudopacman |
 | 交叉编译             | 已解决  | sudopacman |
-| 兼容windows        | 最低程度 | sudopacman |
+| 兼容windows         | 最低程度 | sudopacman |
 | socket崩溃问题       | 已解决  | sudopacman |
 | 指令执行             | 未解决  |            |
 | 监听端口             | 已解决  | sudopacman |
@@ -39,6 +39,7 @@
 | 记忆历史指令           | 已解决  | sudopacman |
 | `:wq`            | 未解决  |            |
 | `:![本地指令]`       | 未解决  |            |
+|  wiki页             | 未解决  |            |
 
 # 使用
 
@@ -82,17 +83,19 @@ cd bin
 以下为`help`中的说明.
 
 ```bash
-[root_cn@archlinux vy-netcat]$ ./nc -h
-VY netcat v0.2.0, the network tools suitable for CTF.
+[root_cn@archlinux bin]$ ./nc -h
+VY-netcat v0.3.0, the network tools suitable for CTF.
 Basic usages:
  connect to somewhere:  nc [addr] [port]
+                        nc [addr]:[port]
  listen to somewhere:   nc -lp [port]
- keep to listen:                nc -klp [port]
+ keep to listen:        nc -klp [port]
 CmdOptions:
- -h, --help                            display this help and exit.
- -e, --exec [shell]                    program to exec after connect.
- -lp, --listen_port [int]              listen the local port number.
- -klp, --keep_listen_port [int]        keep to listen the local port number.
+ -h, --help                             display this help and exit.
+ -e, --exec [shell]                     program to exec after connect.
+ -lp, --listen_port [int]               listen the local port number.
+ -klp, --keep_listen_port [int]         keep to listen the local port number.
+ -s, --security {0, 1}                  set the security mode.
 ```
 
 # 参与贡献

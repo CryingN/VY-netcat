@@ -1,34 +1,40 @@
 module main
 
-//import readline { read_line }
-//import net
-import os { user_os, new_process }
+import os
+import readline { Readline }
+import time
+import term { red }
 
 fn main() {
-	mut p := new_process('./run')
-	p.run()
+	mut data := ''
+	exec := '/bin/sh'
+
+	mut p := os.new_process(exec)
+	mut line := Readline{ skip_empty : true }
+
 	p.set_redirect_stdio()
-	
-	if p.is_pending(.stdout) { 
-		dump( p.stdout_read() ) 
-	}
-	//p.wait()
-	if p.is_pending(.stdin) { 
-		p.stdin_write('aaa') 
-	}
-	//data := p.pipe_read(.stdin) or { '' }
-	//println(data)
+	p.run()
 
-	//p.stdin_write('ls')	
+	for p.is_alive() {
+		os.flush()
+		data = line.read_line('[root_cn@virtual]$ ') or { return }
+		if data == ':q' {
+			break
+		}
+		
+		p.stdin_write( data + '\n' )
 	
-	/*
-	os.exec('/bin/neofetch')
-	read_line()
+		time.sleep( 150 * time.millisecond )
+		
+		if out := p.pipe_read(.stdout) {
+			print(out)
+		}
+		if err := p.pipe_read(.stderr) {
+			print(red(err))
+		}
 
-	data := p.stdout_slurp()
+	}
 	p.close()
-	print(data)
-	//socket.write_string(data) or { exit(1) }
-	*/
+	p.wait()
 	
 }

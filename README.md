@@ -24,7 +24,7 @@ VY-netcat is a network tool written in the [vlang](https://vlang.io/) language, 
 |:--------------------------:|:--------:|:----------:|
 | Help Menu                  | Solved   | sudopacman |
 | Basic Connection           | Solved   | sudopacman |
-| `nc [ip]:[port]`           | Unsolved |            |
+| `nc [ip]:[port]`           | Solved   | sudopacman |
 | GCC Compilation Support    | Solved   | sudopacman |
 | Cross-Compilation          | Solved   | sudopacman |
 | Windows Compatibility      | Minimal  | sudopacman |
@@ -34,8 +34,9 @@ VY-netcat is a network tool written in the [vlang](https://vlang.io/) language, 
 | Keep Listening             | Solved   | sudopacman |
 | `ctrl`+`C` to exit         | Solved   | sudopacman |
 | Memory history instruction | Solved   | sudopacman |
-| `:wq`                      |          |            |
-| `:![local sh]`             |          |            |
+| `:wq`                      | Unsolved |            |
+| `:![local sh]`             | Unsolved |            |
+|  wiki page                 | Unsolved |            |
 
 # Usage
 
@@ -67,7 +68,7 @@ cd bin
 **VY-netcat** minimally supports usage in a Windows environment. Considering the inconvenience of using make, a separate **make.bat** file is provided for compilation:
 
 ```shell
-git clone https://github.com/CryingN/VY-netcat.g\it  
+git clone https://github.com/CryingN/VY-netcat.git  
 cd VY-netcat  
 ./make  
 cd bin  
@@ -79,17 +80,19 @@ cd bin
 Below is the description from the `help` menu.
 
 ```bash
-[root_cn@archlinux vy-netcat]$ ./nc -h  
-VY netcat v0.2.1, the network tools suitable for CTF.  
-Basic usages:  
- connect to somewhere:  nc [addr] [port]  
- listen to somewhere:   nc -lp [port]  
- keep to listen:                nc -klp [port]  
-CmdOptions:  
- -h, --help                            display this help and exit.  
- -e, --exec [shell]                    program to exec after connect.  
- -lp, --listen_port [int]              listen the local port number.  
- -klp, --keep_listen_port [int]        keep to listen the local port number.
+[root_cn@archlinux bin]$ ./nc -h
+VY-netcat v0.3.0, the network tools suitable for CTF.
+Basic usages:
+ connect to somewhere:  nc [addr] [port]
+                        nc [addr]:[port]
+ listen to somewhere:   nc -lp [port]
+ keep to listen:        nc -klp [port]
+CmdOptions:
+ -h, --help                             display this help and exit.
+ -e, --exec [shell]                     program to exec after connect.
+ -lp, --listen_port [int]               listen the local port number.
+ -klp, --keep_listen_port [int]         keep to listen the local port number.
+ -s, --security {0, 1}                  set the security mode.
 ```
 
 # Contributing

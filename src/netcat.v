@@ -9,16 +9,7 @@ import client { set_sever, send_message, for_free }
 import log
 
 fn main() {
-	version := 'v0.2.1'
-
-
-	mut args := os.args.clone()
-
-	// now you can run nc.exe in windows.
-	if args.len == 1 {
-			mut data := args[0] + ' '
-			data += os.input('Cmd line:')			args = data.split(' ')
-	}
+	version := 'v0.3.0'
 
 	long_options := [
 		CmdOption{
@@ -49,7 +40,24 @@ fn main() {
 			defa: 'false'
 			desc: 'keep to listen the local port number.'
 		}
+		CmdOption{
+			abbr: '-s'
+			full: '--security'
+			vari: '{0, 1}'
+			defa: '0'
+			desc: 'set the security mode.' 
+		}
 	]
+
+	mut args := os.args.clone()
+
+	// now you can run nc.exe in windows.
+	if args.len == 1 {
+			mut arg := args[0] + ' '
+			help(long_options, version)
+			arg += os.input('\033[36mCmd line: \033[0m')
+			args = arg.split(' ')
+	}
 	
 	if set_options(args, long_options[0]) {
 		help(long_options, version)
@@ -81,17 +89,20 @@ fn main() {
 	
 	// 连接部分
 	if connect {
-		if args.len < 3 {
-				println('${log.false_log}Please refer to the help for use.')
-                help(long_options, version)
-                exit(1)
-        }
+		mut connect_addr := ''
 
-		addr := args[1]
-		port := args[2]
-        	
-		mut socket := net.dial_tcp(addr+':'+port) or {
-        		println('${log.false_log}${addr}:${port} not found.')
+		if args[1].index(':') != none {
+			connect_addr = args[1]
+		} else if args.len < 3 {
+			println('${log.false_log}Please refer to the help for use.')
+            help(long_options, version)
+            exit(1)
+        } else {
+			connect_addr = args[1] + ':' + args[2]
+		}
+
+		mut socket := net.dial_tcp(connect_addr) or {
+        		println('${log.false_log}${connect_addr} not found.')
         		exit(1)
         	}
         
@@ -112,8 +123,15 @@ fn load_data(mut socket net.TcpConn) {
 
 // -h or --help
 fn help(long_options []CmdOption, version string) {
-	mut data := 'VY netcat ${version}, the network tools suitable for CTF.\nBasic usages:\n connect to somewhere:	nc [addr] [port]\n listen to somewhere:	nc -lp [port]\n keep to listen:		nc -klp [port]\nCmdOptions:'
+	mut data := 'VY-netcat ${version}, the network tools suitable for CTF.'
+	data += '\nBasic usages:'
+	data += '\n connect to somewhere:\tnc [addr] [port]'
+	data += '\n \t\t\tnc [addr]:[port]'
+	data += '\n listen to somewhere:\tnc -lp [port]'
+	data += '\n keep to listen:\tnc -klp [port]'
+	data += '\nCmdOptions:'
 	println(data)
+
 	for v in long_options {
 		data = ' ${v.abbr}, ${v.full} ${v.vari}'
 		data_len := data.len
