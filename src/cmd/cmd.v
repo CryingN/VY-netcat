@@ -34,7 +34,16 @@ pub fn set_options(args []string, long_option CmdOption) bool {
 	return flags
 }
 
-
+// for abr find option's.
+pub fn find_options(args []string, long_options []CmdOption, abr string ) string {
+        mut flags := ''
+	for long_option in long_options {
+		if long_option.abbr == '-e' {
+			flags = options( args, long_option )
+		}
+	}
+	return flags
+}
 
 
 

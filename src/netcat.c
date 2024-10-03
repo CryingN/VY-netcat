@@ -148,6 +148,7 @@ typedef struct net__ListenOptions net__ListenOptions;
 typedef struct net__TcpSocket net__TcpSocket;
 typedef struct net__UdpSocket net__UdpSocket;
 typedef struct net__UdpConn net__UdpConn;
+typedef struct client__SetServer client__SetServer;
 typedef struct _result_int _result_int;
 typedef struct _result_f64 _result_f64;
 typedef struct _result_u64 _result_u64;
@@ -1906,6 +1907,13 @@ struct strconv__BF_param {
 	bool rm_tail_zero;
 };
 
+struct client__SetServer {
+	string exec;
+	string security;
+	string port;
+	bool keep;
+};
+
 struct strconv__PrepNumber {
 	bool negative;
 	int exponent;
@@ -2026,6 +2034,17 @@ struct net__ListenOptions {
 	int backlog;
 };
 
+struct io__BufferedReader {
+	io__Reader reader;
+	Array_u8 buf;
+	int offset;
+	int len;
+	int fails;
+	int mfails;
+	bool end_of_stream;
+	int total_read;
+};
+
 struct strings__textscanner__TextScanner {
 	string input;
 	int ilen;
@@ -2060,17 +2079,6 @@ struct time__StopWatch {
 	u64 elapsed;
 	u64 start;
 	u64 end;
-};
-
-struct io__BufferedReader {
-	io__Reader reader;
-	Array_u8 buf;
-	int offset;
-	int len;
-	int fails;
-	int mfails;
-	bool end_of_stream;
-	int total_read;
 };
 
 struct io__BufferedReaderConfig {
@@ -2405,6 +2413,20 @@ typedef struct thread_arg_client__send_message {
 	net__TcpConn* arg1;
 } thread_arg_client__send_message;
  void* client__send_message_thread_wrapper(thread_arg_client__send_message *arg);
+
+typedef struct thread_arg_client__set_process {
+	void (*fn) (string, net__TcpConn*);
+	string arg1;
+	net__TcpConn* arg2;
+} thread_arg_client__set_process;
+ void* client__set_process_thread_wrapper(thread_arg_client__set_process *arg);
+
+typedef struct thread_arg_client__return_process {
+	void (*fn) (os__Process*, io__BufferedReader*);
+	os__Process* arg1;
+	io__BufferedReader* arg2;
+} thread_arg_client__return_process;
+ void* client__return_process_thread_wrapper(thread_arg_client__return_process *arg);
 
 typedef struct thread_arg_main__load_data {
 	void (*fn) (net__TcpConn*);
@@ -3335,6 +3357,7 @@ void ArrayFlags_toggle(ArrayFlags* e, ArrayFlags flag);
 ArrayFlags ArrayFlags__static__zero(void);
 string cmd__options(Array_string args, cmd__CmdOption long_option);
 bool cmd__set_options(Array_string args, cmd__CmdOption long_option);
+string cmd__find_options(Array_string args, Array_cmd__CmdOption long_options, string abr);
 strings__textscanner__TextScanner strings__textscanner__new(string input);
 void strings__textscanner__TextScanner_free(strings__textscanner__TextScanner* ss);
 int strings__textscanner__TextScanner_remaining(strings__textscanner__TextScanner* ss);
@@ -4143,10 +4166,13 @@ VV_LOCAL_SYMBOL _result_bool net__UdpSocket_select(net__UdpSocket* s, net__Selec
 VV_LOCAL_SYMBOL _result_net__Addr net__UdpSocket_remote(net__UdpSocket* s);
 _result_u16 net__validate_port(int port);
 _result_multi_return_string_u16 net__split_address(string addr);
-void client__set_sever(string port, bool keep);
+void client__set_server(client__SetServer s);
 VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket);
 void client__send_message(net__TcpConn* socket);
-void client__for_free(string data, net__TcpConn* socket);
+VV_LOCAL_SYMBOL void client__for_free(string data, net__TcpConn* socket);
+VV_LOCAL_SYMBOL void client__socket_print(string data, net__TcpConn* socket);
+VV_LOCAL_SYMBOL void client__return_process(os__Process* p, io__BufferedReader* reader);
+VV_LOCAL_SYMBOL void client__set_process(string exec, net__TcpConn* socket);
 VV_LOCAL_SYMBOL void main__main(void);
 VV_LOCAL_SYMBOL void main__load_data(net__TcpConn* socket);
 VV_LOCAL_SYMBOL void main__help(Array_cmd__CmdOption long_options, string version);
@@ -5075,6 +5101,16 @@ void* client__send_message_thread_wrapper(thread_arg_client__send_message *arg) 
 	_v_free(arg);
 	return 0;
 }
+void* client__set_process_thread_wrapper(thread_arg_client__set_process *arg) {
+	arg->fn(arg->arg1, arg->arg2);
+	_v_free(arg);
+	return 0;
+}
+void* client__return_process_thread_wrapper(thread_arg_client__return_process *arg) {
+	arg->fn(arg->arg1, arg->arg2);
+	_v_free(arg);
+	return 0;
+}
 void* main__load_data_thread_wrapper(thread_arg_main__load_data *arg) {
 	arg->fn(arg->arg1);
 	_v_free(arg);
@@ -5211,14 +5247,14 @@ static int v_typeof_interface_idx_IError(int sidx) { /* IError */
 	if (sidx == _IError_voidptr_index) return 2;
 	if (sidx == _IError_Error_index) return 82;
 	if (sidx == _IError_MessageError_index) return 84;
-	if (sidx == _IError_time__TimeParseError_index) return 221;
-	if (sidx == _IError_io__Eof_index) return 230;
-	if (sidx == _IError_io__NotExpected_index) return 231;
-	if (sidx == _IError_os__Eof_index) return 123;
-	if (sidx == _IError_os__NotExpected_index) return 124;
-	if (sidx == _IError_os__FileNotOpenedError_index) return 126;
-	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 127;
-	if (sidx == _IError_os__ExecutableNotFoundError_index) return 145;
+	if (sidx == _IError_time__TimeParseError_index) return 223;
+	if (sidx == _IError_io__Eof_index) return 231;
+	if (sidx == _IError_io__NotExpected_index) return 232;
+	if (sidx == _IError_os__Eof_index) return 124;
+	if (sidx == _IError_os__NotExpected_index) return 125;
+	if (sidx == _IError_os__FileNotOpenedError_index) return 127;
+	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 128;
+	if (sidx == _IError_os__ExecutableNotFoundError_index) return 146;
 	return 30;
 }
 static char * v_typeof_interface_io__Reader(int sidx) { /* io.Reader */ 
@@ -5231,12 +5267,12 @@ static char * v_typeof_interface_io__Reader(int sidx) { /* io.Reader */
 }
 
 static int v_typeof_interface_idx_io__Reader(int sidx) { /* io.Reader */ 
-	if (sidx == _io__Reader_net__TcpConn_index) return 102;
+	if (sidx == _io__Reader_net__TcpConn_index) return 103;
 	if (sidx == _io__Reader_voidptr_index) return 2;
-	if (sidx == _io__Reader_os__File_index) return 125;
-	if (sidx == _io__Reader_io__BufferedReader_index) return 227;
-	if (sidx == _io__Reader_io__ReaderWriterImpl_index) return 238;
-	return 226;
+	if (sidx == _io__Reader_os__File_index) return 126;
+	if (sidx == _io__Reader_io__BufferedReader_index) return 202;
+	if (sidx == _io__Reader_io__ReaderWriterImpl_index) return 239;
+	return 228;
 }
 static char * v_typeof_interface_io__Writer(int sidx) { /* io.Writer */ 
 	if (sidx == _io__Writer_io__MultiWriter_index) return "io.MultiWriter";
@@ -5249,13 +5285,13 @@ static char * v_typeof_interface_io__Writer(int sidx) { /* io.Writer */
 }
 
 static int v_typeof_interface_idx_io__Writer(int sidx) { /* io.Writer */ 
-	if (sidx == _io__Writer_io__MultiWriter_index) return 234;
+	if (sidx == _io__Writer_io__MultiWriter_index) return 235;
 	if (sidx == _io__Writer_voidptr_index) return 2;
-	if (sidx == _io__Writer_net__TcpConn_index) return 102;
-	if (sidx == _io__Writer_os__File_index) return 125;
-	if (sidx == _io__Writer_net__UdpConn_index) return 197;
-	if (sidx == _io__Writer_io__ReaderWriterImpl_index) return 238;
-	return 232;
+	if (sidx == _io__Writer_net__TcpConn_index) return 103;
+	if (sidx == _io__Writer_os__File_index) return 126;
+	if (sidx == _io__Writer_net__UdpConn_index) return 198;
+	if (sidx == _io__Writer_io__ReaderWriterImpl_index) return 239;
+	return 233;
 }
 static char * v_typeof_interface_io__RandomReader(int sidx) { /* io.RandomReader */ 
 	if (sidx == _io__RandomReader_os__File_index) return "os.File";
@@ -5264,9 +5300,9 @@ static char * v_typeof_interface_io__RandomReader(int sidx) { /* io.RandomReader
 }
 
 static int v_typeof_interface_idx_io__RandomReader(int sidx) { /* io.RandomReader */ 
-	if (sidx == _io__RandomReader_os__File_index) return 125;
+	if (sidx == _io__RandomReader_os__File_index) return 126;
 	if (sidx == _io__RandomReader_voidptr_index) return 2;
-	return 236;
+	return 237;
 }
 static char * v_typeof_interface_io__ReaderWriter(int sidx) { /* io.ReaderWriter */ 
 	if (sidx == _io__ReaderWriter_io__ReaderWriterImpl_index) return "io.ReaderWriterImpl";
@@ -5275,16 +5311,16 @@ static char * v_typeof_interface_io__ReaderWriter(int sidx) { /* io.ReaderWriter
 }
 
 static int v_typeof_interface_idx_io__ReaderWriter(int sidx) { /* io.ReaderWriter */ 
-	if (sidx == _io__ReaderWriter_io__ReaderWriterImpl_index) return 238;
+	if (sidx == _io__ReaderWriter_io__ReaderWriterImpl_index) return 239;
 	if (sidx == _io__ReaderWriter_voidptr_index) return 2;
-	return 237;
+	return 238;
 }
 static char * v_typeof_interface_io__RandomWriter(int sidx) { /* io.RandomWriter */ 
 	return "unknown io.RandomWriter";
 }
 
 static int v_typeof_interface_idx_io__RandomWriter(int sidx) { /* io.RandomWriter */ 
-	return 239;
+	return 240;
 }
 static char * v_typeof_interface_rand__PRNG(int sidx) { /* rand.PRNG */ 
 	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return "rand.wyrand.WyRandRNG";
@@ -5293,30 +5329,30 @@ static char * v_typeof_interface_rand__PRNG(int sidx) { /* rand.PRNG */
 }
 
 static int v_typeof_interface_idx_rand__PRNG(int sidx) { /* rand.PRNG */ 
-	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 250;
+	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 251;
 	if (sidx == _rand__PRNG_voidptr_index) return 2;
-	return 244;
+	return 245;
 }
 static char * v_typeof_interface_hash__Hasher(int sidx) { /* hash.Hasher */ 
 	return "unknown hash.Hasher";
 }
 
 static int v_typeof_interface_idx_hash__Hasher(int sidx) { /* hash.Hasher */ 
-	return 256;
+	return 257;
 }
 static char * v_typeof_interface_hash__Hash32er(int sidx) { /* hash.Hash32er */ 
 	return "unknown hash.Hash32er";
 }
 
 static int v_typeof_interface_idx_hash__Hash32er(int sidx) { /* hash.Hash32er */ 
-	return 257;
+	return 258;
 }
 static char * v_typeof_interface_hash__Hash64er(int sidx) { /* hash.Hash64er */ 
 	return "unknown hash.Hash64er";
 }
 
 static int v_typeof_interface_idx_hash__Hash64er(int sidx) { /* hash.Hash64er */ 
-	return 258;
+	return 259;
 }
 // << typeof() support for sum types
 
@@ -16214,6 +16250,17 @@ bool cmd__set_options(Array_string args, cmd__CmdOption long_option) {
 		string v = ((string*)args.data)[_t1];
 		if (string__eq(v, long_option.abbr) || string__eq(v, long_option.full)) {
 			flags = true;
+		}
+	}
+	return flags;
+}
+
+string cmd__find_options(Array_string args, Array_cmd__CmdOption long_options, string abr) {
+	string flags = _SLIT("");
+	for (int _t1 = 0; _t1 < long_options.len; ++_t1) {
+		cmd__CmdOption long_option = ((cmd__CmdOption*)long_options.data)[_t1];
+		if (string__eq(long_option.abbr, _SLIT("-e"))) {
+			flags = cmd__options(args, long_option);
 		}
 	}
 	return flags;
@@ -28064,79 +28111,120 @@ _result_multi_return_string_u16 net__split_address(string addr) {
 	return _t3;
 }
 
-void client__set_sever(string port, bool keep) {
-	_result_net__TcpListener_ptr _t1 = net__listen_tcp(net__AddrFamily__ip6, string__plus(_SLIT(":"), port), ((net__ListenOptions){.dualstack = true,.backlog = 128,}));
+void client__set_server(client__SetServer s) {
+	_result_net__TcpListener_ptr _t1 = net__listen_tcp(net__AddrFamily__ip6, string__plus(_SLIT(":"), s.port), ((net__ListenOptions){.dualstack = true,.backlog = 128,}));
 	if (_t1.is_error) {
 		IError err = _t1.err;
-		println( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__false_log}}, {_SLIT("The port: "), 0xfe10, {.d_s = port}}, {_SLIT(" listening failed."), 0, { .d_c = 0 }}})));
+		println( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__false_log}}, {_SLIT("The port: "), 0xfe10, {.d_s = s.port}}, {_SLIT(" listening failed."), 0, { .d_c = 0 }}})));
 		_v_exit(1);
 		VUNREACHABLE();
 	;
 	}
 	
  	net__TcpListener* server =  (*(net__TcpListener**)_t1.data);
-	if (keep) {
-		for (;;) {
-			_result_net__TcpConn_ptr _t2 = net__TcpListener_accept(server);
-			if (_t2.is_error) {
-				IError err = _t2.err;
+	if ((s.exec).len == 0) {
+		if (s.keep) {
+			for (;;) {
+				_result_net__TcpConn_ptr _t2 = net__TcpListener_accept(server);
+				if (_t2.is_error) {
+					IError err = _t2.err;
+					_v_exit(1);
+					VUNREACHABLE();
+				;
+				}
+				
+ 				net__TcpConn* socket =  (*(net__TcpConn**)_t2.data);
+				// start go
+				thread_arg_client__handle_client *arg__t3 = (thread_arg_client__handle_client *) _v_malloc(sizeof(thread_arg_client__handle_client));
+				arg__t3->fn = client__handle_client;
+				arg__t3->arg1 = socket;
+				pthread_t thread__t3;
+				pthread_attr_t thread__t3_attributes;
+				pthread_attr_init(&thread__t3_attributes);
+				pthread_attr_setstacksize(&thread__t3_attributes, 8388608); // fn: client.handle_client
+				int _t3_thr_res = pthread_create(&thread__t3, &thread__t3_attributes, (void*)client__handle_client_thread_wrapper, arg__t3);
+				if (_t3_thr_res) panic_error_number(tos3("`go client__handle_client()`: "), _t3_thr_res);
+				pthread_detach(thread__t3);
+				// end go
+				;
+				// start go
+				thread_arg_client__send_message *arg__t5 = (thread_arg_client__send_message *) _v_malloc(sizeof(thread_arg_client__send_message));
+				arg__t5->fn = client__send_message;
+				arg__t5->arg1 = socket;
+				pthread_t thread__t5;
+				pthread_attr_t thread__t5_attributes;
+				pthread_attr_init(&thread__t5_attributes);
+				pthread_attr_setstacksize(&thread__t5_attributes, 8388608); // fn: client.send_message
+				int _t5_thr_res = pthread_create(&thread__t5, &thread__t5_attributes, (void*)client__send_message_thread_wrapper, arg__t5);
+				if (_t5_thr_res) panic_error_number(tos3("`go client__send_message()`: "), _t5_thr_res);
+				pthread_detach(thread__t5);
+				// end go
+				;
+			}
+		} else {
+			_result_net__TcpConn_ptr _t7 = net__TcpListener_accept(server);
+			if (_t7.is_error) {
+				IError err = _t7.err;
 				_v_exit(1);
 				VUNREACHABLE();
 			;
 			}
 			
- 			net__TcpConn* socket =  (*(net__TcpConn**)_t2.data);
+ 			net__TcpConn* socket =  (*(net__TcpConn**)_t7.data);
 			// start go
-			thread_arg_client__handle_client *arg__t3 = (thread_arg_client__handle_client *) _v_malloc(sizeof(thread_arg_client__handle_client));
-			arg__t3->fn = client__handle_client;
-			arg__t3->arg1 = socket;
-			pthread_t thread__t3;
-			pthread_attr_t thread__t3_attributes;
-			pthread_attr_init(&thread__t3_attributes);
-			pthread_attr_setstacksize(&thread__t3_attributes, 8388608); // fn: client.handle_client
-			int _t3_thr_res = pthread_create(&thread__t3, &thread__t3_attributes, (void*)client__handle_client_thread_wrapper, arg__t3);
-			if (_t3_thr_res) panic_error_number(tos3("`go client__handle_client()`: "), _t3_thr_res);
-			pthread_detach(thread__t3);
+			thread_arg_client__handle_client *arg__t8 = (thread_arg_client__handle_client *) _v_malloc(sizeof(thread_arg_client__handle_client));
+			arg__t8->fn = client__handle_client;
+			arg__t8->arg1 = socket;
+			pthread_t thread__t8;
+			pthread_attr_t thread__t8_attributes;
+			pthread_attr_init(&thread__t8_attributes);
+			pthread_attr_setstacksize(&thread__t8_attributes, 8388608); // fn: client.handle_client
+			int _t8_thr_res = pthread_create(&thread__t8, &thread__t8_attributes, (void*)client__handle_client_thread_wrapper, arg__t8);
+			if (_t8_thr_res) panic_error_number(tos3("`go client__handle_client()`: "), _t8_thr_res);
+			pthread_detach(thread__t8);
 			// end go
 			;
-			// start go
-			thread_arg_client__send_message *arg__t5 = (thread_arg_client__send_message *) _v_malloc(sizeof(thread_arg_client__send_message));
-			arg__t5->fn = client__send_message;
-			arg__t5->arg1 = socket;
-			pthread_t thread__t5;
-			pthread_attr_t thread__t5_attributes;
-			pthread_attr_init(&thread__t5_attributes);
-			pthread_attr_setstacksize(&thread__t5_attributes, 8388608); // fn: client.send_message
-			int _t5_thr_res = pthread_create(&thread__t5, &thread__t5_attributes, (void*)client__send_message_thread_wrapper, arg__t5);
-			if (_t5_thr_res) panic_error_number(tos3("`go client__send_message()`: "), _t5_thr_res);
-			pthread_detach(thread__t5);
-			// end go
-			;
+			client__send_message(socket);
 		}
 	} else {
-		_result_net__TcpConn_ptr _t7 = net__TcpListener_accept(server);
-		if (_t7.is_error) {
-			IError err = _t7.err;
-			_v_exit(1);
-			VUNREACHABLE();
-		;
+		if (s.keep) {
+			for (;;) {
+				_result_net__TcpConn_ptr _t10 = net__TcpListener_accept(server);
+				if (_t10.is_error) {
+					IError err = _t10.err;
+					_v_exit(1);
+					VUNREACHABLE();
+				;
+				}
+				
+ 				net__TcpConn* socket =  (*(net__TcpConn**)_t10.data);
+				// start go
+				thread_arg_client__set_process *arg__t11 = (thread_arg_client__set_process *) _v_malloc(sizeof(thread_arg_client__set_process));
+				arg__t11->fn = client__set_process;
+				arg__t11->arg1 = s.exec;
+				arg__t11->arg2 = socket;
+				pthread_t thread__t11;
+				pthread_attr_t thread__t11_attributes;
+				pthread_attr_init(&thread__t11_attributes);
+				pthread_attr_setstacksize(&thread__t11_attributes, 8388608); // fn: client.set_process
+				int _t11_thr_res = pthread_create(&thread__t11, &thread__t11_attributes, (void*)client__set_process_thread_wrapper, arg__t11);
+				if (_t11_thr_res) panic_error_number(tos3("`go client__set_process()`: "), _t11_thr_res);
+				pthread_detach(thread__t11);
+				// end go
+				;
+			}
+		} else {
+			_result_net__TcpConn_ptr _t13 = net__TcpListener_accept(server);
+			if (_t13.is_error) {
+				IError err = _t13.err;
+				_v_exit(1);
+				VUNREACHABLE();
+			;
+			}
+			
+ 			net__TcpConn* socket =  (*(net__TcpConn**)_t13.data);
+			client__set_process(s.exec, socket);
 		}
-		
- 		net__TcpConn* socket =  (*(net__TcpConn**)_t7.data);
-		// start go
-		thread_arg_client__handle_client *arg__t8 = (thread_arg_client__handle_client *) _v_malloc(sizeof(thread_arg_client__handle_client));
-		arg__t8->fn = client__handle_client;
-		arg__t8->arg1 = socket;
-		pthread_t thread__t8;
-		pthread_attr_t thread__t8_attributes;
-		pthread_attr_init(&thread__t8_attributes);
-		pthread_attr_setstacksize(&thread__t8_attributes, 8388608); // fn: client.handle_client
-		int _t8_thr_res = pthread_create(&thread__t8, &thread__t8_attributes, (void*)client__handle_client_thread_wrapper, arg__t8);
-		if (_t8_thr_res) panic_error_number(tos3("`go client__handle_client()`: "), _t8_thr_res);
-		pthread_detach(thread__t8);
-		// end go
-		;
-		client__send_message(socket);
 	}
 }
 
@@ -28180,7 +28268,7 @@ VV_LOCAL_SYMBOL void client__handle_client(net__TcpConn* socket) {
 void client__send_message(net__TcpConn* socket) {
 	bool client__send_message_defer_0 = false;
 	string data;
-	data = _SLIT("test");
+	data = _SLIT("");
 	readline__Readline line = ((readline__Readline){.is_raw = 0,.orig_termios = (term__termios__Termios){.c_iflag = 0,.c_oflag = 0,.c_cflag = 0,.c_lflag = 0,.c_line = 0,.c_ispeed = 0,.c_ospeed = 0,},.current = __new_array_noscan(0, 0, sizeof(rune)),.cursor = 0,.overwrite = 0,.cursor_row_offset = 0,.prompt = (string){.str=(byteptr)"", .is_lit=1},.prompt_offset = 0,.previous_lines = __new_array(0, 0, sizeof(Array_rune)),.skip_empty = true,.search_index = 0,.is_tty = 0,.last_prefix_completion = __new_array_noscan(0, 0, sizeof(rune)),.last_completion_offset = 0,.completion_list = __new_array(0, 0, sizeof(string)),.completion_callback = ((void*)0),});
 	for (;;) {
 		_result_string _t1 = readline__Readline_read_line(&line, _SLIT(""));
@@ -28217,16 +28305,97 @@ void client__send_message(net__TcpConn* socket) {
 	// Defer end
 }
 
-void client__for_free(string data, net__TcpConn* socket) {
+VV_LOCAL_SYMBOL void client__for_free(string data, net__TcpConn* socket) {
 	println(data);
 	string_free(&data);
 	_v_exit(1);
 	VUNREACHABLE();
 }
 
+VV_LOCAL_SYMBOL void client__socket_print(string data, net__TcpConn* socket) {
+	_result_int _t1 = net__TcpConn_write_string(socket, data);
+	if (_t1.is_error) {
+		IError err = _t1.err;
+		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__warn_log}}, {_SLIT("close the socket."), 0, { .d_c = 0 }}})));
+		_v_exit(1);
+		VUNREACHABLE();
+	;
+	}
+	
+  (*(int*)_t1.data);
+}
+
+VV_LOCAL_SYMBOL void client__return_process(os__Process* p, io__BufferedReader* reader) {
+	for (;;) {
+		if (!(os__Process_is_alive(p))) break;
+		_result_string _t1 = io__BufferedReader_read_line(reader, ((io__BufferedReadLineConfig){.delim = '\n',}));
+		if (_t1.is_error) {
+			IError err = _t1.err;
+			*(string*) _t1.data = _SLIT("");
+		}
+		
+ 		string received_line =  (*(string*)_t1.data);
+		os__Process_stdin_write(p, string__plus(received_line, _SLIT("\n")));
+	}
+}
+
+VV_LOCAL_SYMBOL void client__set_process(string exec, net__TcpConn* socket) {
+	bool client__set_process_defer_0 = false;
+	os__Process* p;
+	p = os__new_process(exec);
+	client__set_process_defer_0 = true;
+	io__BufferedReader* reader = io__new_buffered_reader(((io__BufferedReaderConfig){.reader = I_net__TcpConn_to_Interface_io__Reader(socket),.cap = (int_literal)(128 * 1024),.retries = 2,}));
+	os__Process_set_redirect_stdio(p);
+	os__Process_run(p);
+	// start go
+	thread_arg_client__return_process *arg__t1 = (thread_arg_client__return_process *) _v_malloc(sizeof(thread_arg_client__return_process));
+	arg__t1->fn = client__return_process;
+	arg__t1->arg1 = p;
+	arg__t1->arg2 = reader;
+	pthread_t thread__t1;
+	pthread_attr_t thread__t1_attributes;
+	pthread_attr_init(&thread__t1_attributes);
+	pthread_attr_setstacksize(&thread__t1_attributes, 8388608); // fn: client.return_process
+	int _t1_thr_res = pthread_create(&thread__t1, &thread__t1_attributes, (void*)client__return_process_thread_wrapper, arg__t1);
+	if (_t1_thr_res) panic_error_number(tos3("`go client__return_process()`: "), _t1_thr_res);
+	pthread_detach(thread__t1);
+	// end go
+	;
+	for (;;) {
+		if (!(os__Process_is_alive(p))) break;
+		if (os__Process_is_pending(p, os__ChildProcessPipeKind__stdout)) {
+			os__flush();
+			string out = os__Process_stdout_read(p);
+			client__socket_print(out, socket);
+		}
+		if (os__Process_is_pending(p, os__ChildProcessPipeKind__stderr)) {
+			os__flush();
+			string err = os__Process_stderr_read(p);
+			client__socket_print(err, socket);
+		}
+	}
+	os__Process_close(p);
+	os__Process_wait(p);
+	_result_void _t3 = net__TcpConn_close(socket);
+	if (_t3.is_error) {
+		IError err = _t3.err;
+		_v_exit(1);
+		VUNREACHABLE();
+	;
+	}
+	
+ ;
+	// Defer begin
+	if (client__set_process_defer_0) {
+		os__Process_close(p);
+		os__Process_wait(p);
+	}
+	// Defer end
+}
+
 VV_LOCAL_SYMBOL void main__main(void) {
-	string version = _SLIT("v0.3.0");
-	Array_cmd__CmdOption long_options = new_array_from_c_array(5, 5, sizeof(cmd__CmdOption), _MOV((cmd__CmdOption[5]){((cmd__CmdOption){.abbr = _SLIT("-h"),.full = _SLIT("--help"),.vari = _SLIT(""),.defa = _SLIT(""),.desc = _SLIT("display this help and exit."),}), ((cmd__CmdOption){.abbr = _SLIT("-e"),.full = _SLIT("--exec"),.vari = _SLIT("[shell]"),.defa = _SLIT("false"),.desc = _SLIT("program to exec after connect."),}), ((cmd__CmdOption){.abbr = _SLIT("-lp"),.full = _SLIT("--listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("listen the local port number."),}), ((cmd__CmdOption){.abbr = _SLIT("-klp"),.full = _SLIT("--keep_listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("keep to listen the local port number."),}), ((cmd__CmdOption){.abbr = _SLIT("-s"),.full = _SLIT("--security"),.vari = _SLIT("{0, 1}"),.defa = _SLIT("0"),.desc = _SLIT("set the security mode."),})}));
+	string version = _SLIT("v1.0.0");
+	Array_cmd__CmdOption long_options = new_array_from_c_array(5, 5, sizeof(cmd__CmdOption), _MOV((cmd__CmdOption[5]){((cmd__CmdOption){.abbr = _SLIT("-h"),.full = _SLIT("--help"),.vari = _SLIT(""),.defa = _SLIT(""),.desc = _SLIT("display this help and exit."),}), ((cmd__CmdOption){.abbr = _SLIT("-lp"),.full = _SLIT("--listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("listen the local port number."),}), ((cmd__CmdOption){.abbr = _SLIT("-klp"),.full = _SLIT("--keep_listen_port"),.vari = _SLIT("[int]"),.defa = _SLIT("false"),.desc = _SLIT("keep to listen the local port number."),}), ((cmd__CmdOption){.abbr = _SLIT("-e"),.full = _SLIT("--exec"),.vari = _SLIT("[shell]"),.defa = _SLIT("false"),.desc = _SLIT("program to exec after connect."),}), ((cmd__CmdOption){.abbr = _SLIT("-s"),.full = _SLIT("--security"),.vari = _SLIT("{0, 1}"),.defa = _SLIT("0"),.desc = _SLIT("set the security mode."),})}));
 	Array_string args = array_clone_to_depth(&_const_os__args, 0);
 	if (args.len == 1) {
 		string arg = string__plus((*(string*)array_get(args, 0)), _SLIT(" "));
@@ -28240,19 +28409,15 @@ VV_LOCAL_SYMBOL void main__main(void) {
 		VUNREACHABLE();
 	}
 	bool connect = true;
-	for (int v = 1; v < 4; ++v) {
+	client__SetServer s = ((client__SetServer){.exec = cmd__find_options(args, long_options, _SLIT("-e")),.security = cmd__find_options(args, long_options, _SLIT("-s")),.port = _SLIT(""),.keep = false,});
+	for (int v = 1; v < 3; ++v) {
 		if (!string__eq(cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v))), _SLIT("false"))) {
 			connect = false;
-			if (string__eq((*(cmd__CmdOption*)array_get(long_options, v)).abbr, _SLIT("-e"))) {
-				println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_log__warn_log}}, {_SLIT("\346\262\241\345\206\231\345\256\214, \347\234\213test\346\226\207\344\273\266\350\207\252\345\267\261\350\241\245\346\210\226\350\200\205\347\255\211\346\233\264\346\226\260\345\220\247"), 0, { .d_c = 0 }}})));
-				_v_exit(1);
-				VUNREACHABLE();
-			}
 			if (string__eq((*(cmd__CmdOption*)array_get(long_options, v)).abbr, _SLIT("-lp"))) {
-				client__set_sever(cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v))), false);
-			}
-			if (string__eq((*(cmd__CmdOption*)array_get(long_options, v)).abbr, _SLIT("-klp"))) {
-				client__set_sever(cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v))), true);
+				s.port = cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v)));
+			} else if (string__eq((*(cmd__CmdOption*)array_get(long_options, v)).abbr, _SLIT("-klp"))) {
+				s.port = cmd__options(args, (*(cmd__CmdOption*)array_get(long_options, v)));
+				s.keep = true;
 			}
 		}
 	}
@@ -28292,6 +28457,8 @@ VV_LOCAL_SYMBOL void main__main(void) {
 		// end go
 		;
 		client__send_message(socket);
+	} else {
+		client__set_server(s);
 	}
 }
 

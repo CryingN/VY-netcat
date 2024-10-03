@@ -11,7 +11,7 @@
 
 # Introduction
 
-VY-netcat is a network tool written in the [vlang](https://vlang.io/) language, primarily used for setting up CTF challenge environments. It will be integrated into the [VTF competition platform](https://gitee.com/cryingn/vtf). Compared to other similar tools, it mainly focuses on the following optimizations:
+VY-netcat is a network tool written in the [vlang](https://vlang.io/) language, primarily used for setting up CTF challenge environments. It will be integrated into the [VTF competition platform](https://gitee.com/sakana_ctf/vtf). Compared to other similar tools, it mainly focuses on the following optimizations:
 
 * [gnu-netcat](https://netcat.sourceforge.net/): Solves the issue of not being able to maintain the connection after listening ends.
 * [openbsd-netcat](https://man.openbsd.org/nc.1): Addresses the issue of sending commands for execution.
@@ -22,21 +22,10 @@ VY-netcat is a network tool written in the [vlang](https://vlang.io/) language, 
 
 | Requirement                | Status   | Developer  |
 |:--------------------------:|:--------:|:----------:|
-| Help Menu                  | Solved   | sudopacman |
 | Basic Connection           | Solved   | sudopacman |
-| `nc [ip]:[port]`           | Solved   | sudopacman |
-| GCC Compilation Support    | Solved   | sudopacman |
-| Cross-Compilation          | Solved   | sudopacman |
-| Windows Compatibility      | Minimal  | sudopacman |
-| Socket Crash Issue         | Solved   | sudopacman |
-| Command Execution          | Unsolved |            |
-| Listen on Port             | Solved   | sudopacman |
-| Keep Listening             | Solved   | sudopacman |
-| `ctrl`+`C` to exit         | Solved   | sudopacman |
-| Memory history instruction | Solved   | sudopacman |
-| `:wq`                      | Unsolved |            |
-| `:![local sh]`             | Unsolved |            |
-|  wiki page                 | Unsolved |            |
+| Command Execution          | Solved   | sudopacman |
+| Keep Connection             | Resolve basic connections on instructions, but server functionality has not yet been implemented   | sudopacman |
+| Security Mode              | Unsolved   | sudopacman |
 
 # Usage
 
@@ -81,7 +70,7 @@ Below is the description from the `help` menu.
 
 ```bash
 [root_cn@archlinux bin]$ ./nc -h
-VY-netcat v0.3.0, the network tools suitable for CTF.
+VY-netcat v1.0.0, the network tools suitable for CTF.
 Basic usages:
  connect to somewhere:  nc [addr] [port]
                         nc [addr]:[port]

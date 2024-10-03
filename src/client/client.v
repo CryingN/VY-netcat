@@ -5,27 +5,40 @@ import io
 import readline { Readline }
 import log
 
-pub fn set_sever(port string, keep bool) {
+pub fn set_server(s SetServer) {
 	
-	mut server := net.listen_tcp(.ip6, ':' + port) or {
-		println('${log.false_log}The port: ${port} listening failed.')
+	mut server := net.listen_tcp(.ip6, ':' + s.port) or {
+		println('${log.false_log}The port: ${s.port} listening failed.')
                 exit(1)
 	}
         
         // 当监听到外部tcp连接请求时构建一个socket, 创建子进程信息交换.
-
-        if keep {
-                for {
-                        mut socket := server.accept() or { exit(1) }
-                        spawn handle_client(mut socket)
-                        spawn send_message(mut socket)
-                }
-        }
-        else {
-                mut socket := server.accept() or { exit(1) }
-                spawn handle_client(mut socket)
-                send_message(mut socket)
-        }
+	if s.exec == '' {
+        	if s.keep {
+        	        for {
+				// 这里也是有问题的
+        	                mut socket := server.accept() or { exit(1) }
+        	                spawn handle_client(mut socket)
+        	                spawn send_message(mut socket)
+        	        }
+        	} else {
+        	        mut socket := server.accept() or { exit(1) }
+        	        spawn handle_client(mut socket)
+        	        send_message(mut socket)
+        	} 
+	} else {
+		if s.keep {
+        	        for {
+        	                mut socket := server.accept() or { exit(1) }
+				spawn set_process( s.exec , mut socket )
+        	        }
+        	}
+        	else {
+        	        mut socket := server.accept() or { exit(1) }
+        	        set_process( s.exec, mut socket)
+        	} 
+	
+	}
 }
 
 // listen
@@ -53,7 +66,7 @@ fn handle_client(mut socket net.TcpConn) {
 
 // keep to send messages.
 pub fn send_message(mut socket net.TcpConn) {
-        mut data := 'test' 
+        mut data := '' 
 	
 	mut line := Readline{ skip_empty : true }
 
@@ -96,7 +109,7 @@ pub fn send_message(mut socket net.TcpConn) {
 
 // close the socket.
 
-pub fn for_free(data string, mut socket net.TcpConn) {
+fn for_free(data string, mut socket net.TcpConn) {
 	println(data)
         unsafe{
                 data.free()
@@ -104,5 +117,7 @@ pub fn for_free(data string, mut socket net.TcpConn) {
         // socket.close() or { exit(1) }
         exit(1)
 }
+
+
 
 

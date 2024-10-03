@@ -11,7 +11,7 @@
 
 # 介绍
 
-**VY-netcat**是基于[vlang](https://vlang.io/)语言编写的一款网络工具, 主要用于CTF题目环境搭建, 将集成在[VTF比赛平台](https://gitee.com/cryingn/vtf), 相比较其他同类型工具, 主要将进行以下优化:
+**VY-netcat**是基于[vlang](https://vlang.io/)语言编写的一款网络工具, 主要用于CTF题目环境搭建, 将集成在[VTF比赛平台](https://gitee.com/sakana_ctf/vtf), 相比较其他同类型工具, 主要将进行以下优化:
 
 * [gnu-netcat](https://netcat.sourceforge.net/): 解决监听结束后无法继续保持的问题.
 
@@ -25,21 +25,10 @@
 
 | 需求               | 解决情况 | 开发者        |
 |:----------------:|:----:|:----------:|
-| 帮助菜单             | 已解决  | sudopacman |
-| 基础连接             | 已解决  | sudopacman |
-| `nc [ip]:[port]`    | 已解决  | sudopacman  |
-| 支持gcc编译          | 已解决  | sudopacman |
-| 交叉编译             | 已解决  | sudopacman |
-| 兼容windows         | 最低程度 | sudopacman |
-| socket崩溃问题       | 已解决  | sudopacman |
-| 指令执行             | 未解决  |            |
-| 监听端口             | 已解决  | sudopacman |
-| 保持监听             | 已解决  | sudopacman |
-| `ctrl`+`C`退出     | 已解决  | sudopacman |
-| 记忆历史指令           | 已解决  | sudopacman |
-| `:wq`            | 未解决  |            |
-| `:![本地指令]`       | 未解决  |            |
-|  wiki页             | 未解决  |            |
+| 基本连接             | 已解决  | sudopacman |
+| 指令执行             | 已解决  | sudopacman |
+| 保持连接             | 解决指令上的基础连接, 暂未实现服务器功能  | sudopacman |  
+| 安全保护             | 未解决  |            | 
 
 # 使用
 
@@ -84,7 +73,7 @@ cd bin
 
 ```bash
 [root_cn@archlinux bin]$ ./nc -h
-VY-netcat v0.3.0, the network tools suitable for CTF.
+VY-netcat v1.0.0, the network tools suitable for CTF.
 Basic usages:
  connect to somewhere:  nc [addr] [port]
                         nc [addr]:[port]

@@ -3,13 +3,13 @@
 module main
 
 import os
-import cmd { options, set_options, CmdOption }
+import cmd { options, set_options, find_options, CmdOption }
 import net
-import client { set_sever, send_message, for_free }
+import client { SetServer, set_server, send_message }
 import log
 
 fn main() {
-	version := 'v0.3.0'
+	version := 'v1.0.0'
 
 	long_options := [
 		CmdOption{
@@ -18,13 +18,6 @@ fn main() {
 			vari: ''
 			defa: ''
 			desc: 'display this help and exit.'
-		}
-		CmdOption{
-			abbr: '-e'
-			full: '--exec'
-			vari: '[shell]'
-			defa: 'false'
-			desc: 'program to exec after connect.'
 		}
 		CmdOption{
 			abbr: '-lp'
@@ -39,6 +32,13 @@ fn main() {
 			vari: '[int]'
 			defa: 'false'
 			desc: 'keep to listen the local port number.'
+		}
+		CmdOption{
+			abbr: '-e'
+			full: '--exec'
+			vari: '[shell]'
+			defa: 'false'
+			desc: 'program to exec after connect.'
 		}
 		CmdOption{
 			abbr: '-s'
@@ -65,24 +65,28 @@ fn main() {
 	}
                  
 	mut connect := true
-	for v in 1..4 {
+	mut s := SetServer{ 
+		exec	:	find_options(args, long_options, '-e')
+		security:	find_options(args, long_options, '-s')
+		port	:	''
+		keep	:	false
+	}
+	
+	for v in 1..3 {
 		if options(args, long_options[v]) != 'false' {
 			connect = false
-			if long_options[v].abbr == '-e' {
-				println('${log.warn_log}没写完, 看test文件自己补或者等更新吧')
-				exit(1)
-			}
+
 			if long_options[v].abbr == '-lp' {
-				set_sever(options(args, long_options[v]), false)
-			}
-			if long_options[v].abbr == '-klp' {
+				s.port = options(args, long_options[v])
+			} else if long_options[v].abbr == '-klp' {
 				/**********************************
 				 * statement:
 				 * keep_listen_port会创建多个子进程
 				 * 同时监听多个程序时发信会混乱
 				 * 这里用于配合execute实现多环境访问
 				***********************************/
-				set_sever(options(args, long_options[v]), true)
+				s.port = options(args, long_options[v])
+				s.keep = true
 			}
 		}
 	}
@@ -108,6 +112,8 @@ fn main() {
         
 		spawn load_data(mut socket)
 		send_message(mut socket)
+	} else {
+		set_server( s )
 	}
 }
 
