@@ -9,7 +9,7 @@ import client { SetServer, set_server, send_message }
 import log
 
 fn main() {
-	version := 'v1.0.0'
+	version := 'v1.0.1'
 
 	long_options := [
 		CmdOption{
@@ -37,7 +37,7 @@ fn main() {
 			abbr: '-e'
 			full: '--exec'
 			vari: '[shell]'
-			defa: 'false'
+			defa: ''
 			desc: 'program to exec after connect.'
 		}
 		CmdOption{

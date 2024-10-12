@@ -22,10 +22,20 @@ fn return_process(mut p Process, mut reader &io.BufferedReader) {
 	}
 }
 
-// make a new_process socket to client.
-fn set_process(exec string, mut socket TcpConn) {
-	mut p := os.new_process( exec )
-	//p.set_args(['2>&1'])
+// set a process to run.
+fn set_process(exec string, mut socket TcpConn, pid int) {
+	mut first := exec.split(' ')[0]
+	if first.index('./') == none {
+		first = os.find_abs_path_of_executable(first) or {
+			println( '${log.false_log}未找到执行指令.' )
+			exit(1)
+		}
+	}
+
+	mut p := os.new_process( first )
+	p.pid = pid
+	p.set_args( exec.split(' ')[1..] )
+	
 	defer {
 		//dump(p.code)
 		p.close()

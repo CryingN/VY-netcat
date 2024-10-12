@@ -91,3 +91,8 @@ If the `-e` execution parameter is also specified, the command specified by `-e`
     - Prohibits the `rm` command.
     - Prohibits the `sudo` command.
 
+#### Maximum connection time limit
+
+`-t, --time_limit [int]`
+
+Specify the maximum connection time limit in seconds.

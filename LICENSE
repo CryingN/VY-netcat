@@ -1,4 +1,4 @@
-©版权所有人[完整年份,如:2023] CryingN
+©版权所有人2024 CryingN
 
 根据VY许可证0.1版本（“许可证”）许可:
 使用者在使用场景注明标志的情况下被授予
@@ -9,9 +9,8 @@
 作品包含:
 ./README.md
 ./makefile
-./src/cmd/cmd.v
-./src/netcat.c
-./src/netcat.v
+./make.bat
+./src/[all]
 
 您可以从以下网址获取完整许可证副本：
 

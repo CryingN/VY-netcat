@@ -11,7 +11,7 @@ pub fn set_server(s SetServer) {
 		println('${log.false_log}The port: ${s.port} listening failed.')
                 exit(1)
 	}
-        
+
         // 当监听到外部tcp连接请求时构建一个socket, 创建子进程信息交换.
 	if s.exec == '' {
         	if s.keep {
@@ -28,14 +28,16 @@ pub fn set_server(s SetServer) {
         	} 
 	} else {
 		if s.keep {
+                        mut pid := 0
         	        for {
-        	                mut socket := server.accept() or { exit(1) }
-				spawn set_process( s.exec , mut socket )
+                                mut socket := server.accept() or { exit(1) }
+                                pid += 1
+				spawn set_process( s.exec , mut socket, pid )
         	        }
         	}
         	else {
-        	        mut socket := server.accept() or { exit(1) }
-        	        set_process( s.exec, mut socket)
+                        mut socket := server.accept() or { exit(1) }
+        	        set_process( s.exec, mut socket, 0 )
         	} 
 	
 	}
