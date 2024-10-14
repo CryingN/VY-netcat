@@ -1,6 +1,7 @@
 SRC_FILES_V = ./src/netcat.v
 SRC_FILES_C = ./src/netcat.c
 OUT_NAME = ./bin/nc
+BIN_DIR = ./bin
 
 CC1 = v
 CC2 = gcc
@@ -24,6 +25,7 @@ _make_v_to_c:
 
 
 _compile_static:
+	@if [ ! -d ${BIN_DIR} ]; then mkdir ${BIN_DIR}; fi
 	@echo "[*] compile to: $(OUT_NAME)."
 	@$(CC1) $(SRC_FILES_V) -o $(OUT_NAME) || $(CC2) $(SRC_FILES_C) -o $(OUT_NAME) -lgc
 
