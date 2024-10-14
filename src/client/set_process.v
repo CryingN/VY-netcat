@@ -10,7 +10,7 @@ import net { TcpConn }
 fn socket_print(data string, mut socket TcpConn) {
 	socket.write_string(data) or {
 		println('${log.warn_log}close the socket.')
-		exit(1)
+		//exit(1)
 	}
 }
 
@@ -63,5 +63,8 @@ fn set_process(exec string, mut socket TcpConn, pid int) {
 	
 	p.close()
 	p.wait()
-	socket.close() or { exit(1) }
+	socket.close() or {
+		println('${log.false_log}socket断开连接失败.')
+		exit(1)
+	}
 }

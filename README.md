@@ -70,7 +70,7 @@ Below is the description from the `help` menu.
 
 ```bash
 [root_cn@archlinux bin]$ ./nc -h
-VY-netcat v1.0.1, the network tools suitable for CTF.
+VY-netcat v1.0.2, the network tools suitable for CTF.
 Basic usages:
  connect to somewhere:  nc [addr] [port]
                         nc [addr]:[port]
