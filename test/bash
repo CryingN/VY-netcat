@@ -1,0 +1,16 @@
+# 初始设置
+
+cd /
+cp /home/ctf/vy-netcat/bin/nc /home/pwn/bin
+cp /bin/cat /home/pwn/bin
+cp /bin/nohup /home/pwn/bin
+cp /bin/bash /home/pwn/bin/E7265E64
+cp /bin/ls /home/pwn/bin
+
+# 开始
+
+export PATH=/home/pwn/bin
+E7265E64 -r
+
+nohup
+
