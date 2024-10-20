@@ -12,10 +12,8 @@ fn socket_print(data string, mut socket TcpConn, mut p Process) {
 		println('${log.warn_log}close the socket.')
 		p.close()
 		p.wait()
-		// 这里无法释放, 估计是残留变量了.
 		socket.close() or {
 			println('${log.false_log}socket断开连接失败.')
-			exit(1)
 		}
 	}
 }
@@ -57,13 +55,13 @@ fn set_process(exec string, mut socket TcpConn, pid int) {
 	spawn return_process( mut p, mut reader )
 	
 	for p.is_alive() {
-		flush()
 		if p.is_pending(.stdout) {
+			flush()
 			out := p.stdout_read()
 			socket_print(out, mut socket, mut p)
 		}
-		flush()
 		if p.is_pending(.stderr) {
+			flush()
 			err := p.stderr_read()
 			socket_print(err, mut socket, mut p)
 		}
@@ -73,6 +71,5 @@ fn set_process(exec string, mut socket TcpConn, pid int) {
 	p.wait()
 	socket.close() or {
 		println('${log.false_log}socket断开连接失败.')
-		exit(1)
 	}
 }

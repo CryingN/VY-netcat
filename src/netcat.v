@@ -9,7 +9,7 @@ import client { SetServer, set_server, send_message }
 import log
 
 fn main() {
-	version := 'v1.0.2'
+	version := 'v1.1.0'
 
 	long_options := [
 		CmdOption{
